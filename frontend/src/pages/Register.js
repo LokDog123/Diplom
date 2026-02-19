@@ -50,7 +50,6 @@ function Register() {
         
         setLoading(true);
         
-        // ВАЖНО: передаем ВСЕ 5 параметров
         const success = await register(
             formData.name,
             formData.lastname,

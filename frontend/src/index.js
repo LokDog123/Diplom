@@ -8,3 +8,9 @@ root.render(
     <App />
   </React.StrictMode>
 );
+/*
+cd C:\Users\Miroslav\Desktop\Diploma\backend
+node server.js
+cd C:\Users\Miroslav\Desktop\Diploma\frontend
+npm start
+*/
