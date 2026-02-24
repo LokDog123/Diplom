@@ -1,4 +1,3 @@
-// frontend/src/components/Login.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -75,8 +74,8 @@ function Login() {
                         <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Email</label>
                         <input
                             type="email"
-                            name="email"  // ДОБАВЛЕНО: name="email"
-                            autoComplete="email"  // ДОБАВЛЕНО: autocomplete
+                            name="email"  // ВАЖНО: добавить name
+                            autoComplete="email"  // ВАЖНО: autocomplete для email
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
@@ -95,8 +94,8 @@ function Login() {
                         <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Пароль</label>
                         <input
                             type="password"
-                            name="password"  // ДОБАВЛЕНО: name="password"
-                            autoComplete="current-password"  // ДОБАВЛЕНО: autocomplete
+                            name="password"  // ВАЖНО: добавить name
+                            autoComplete="current-password"  // ВАЖНО: autocomplete для пароля
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',

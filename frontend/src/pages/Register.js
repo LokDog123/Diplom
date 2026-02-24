@@ -27,7 +27,6 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Валидация
         if (formData.password !== formData.confirmPassword) {
             setError('Пароли не совпадают');
             return;
@@ -35,11 +34,6 @@ function Register() {
 
         if (formData.password.length < 6) {
             setError('Пароль должен быть не менее 6 символов');
-            return;
-        }
-
-        if (!formData.name || !formData.lastname) {
-            setError('Имя и фамилия обязательны');
             return;
         }
 
@@ -106,12 +100,11 @@ function Register() {
                 
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                            Имя
-                        </label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Имя</label>
                         <input
                             type="text"
                             name="name"
+                            autoComplete="given-name"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
@@ -127,12 +120,11 @@ function Register() {
                     </div>
                     
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                            Фамилия
-                        </label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Фамилия</label>
                         <input
                             type="text"
                             name="lastname"
+                            autoComplete="family-name"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
@@ -148,12 +140,11 @@ function Register() {
                     </div>
                     
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                            Email
-                        </label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Email</label>
                         <input
                             type="email"
                             name="email"
+                            autoComplete="email"  // ВАЖНО: для запоминания email
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
@@ -169,12 +160,47 @@ function Register() {
                     </div>
                     
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                            Пароль
-                        </label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Телефон</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            autoComplete="tel"
+                            style={{
+                                width: '100%',
+                                padding: '12px 16px',
+                                border: '2px solid #e0e6ed',
+                                borderRadius: '12px',
+                                fontSize: '16px'
+                            }}
+                            value={formData.phone}
+                            onChange={handleChange}
+                            placeholder="+7 (999) 999-99-99"
+                        />
+                    </div>
+
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Дата рождения</label>
+                        <input
+                            type="date"
+                            name="birth_date"
+                            style={{
+                                width: '100%',
+                                padding: '12px 16px',
+                                border: '2px solid #e0e6ed',
+                                borderRadius: '12px',
+                                fontSize: '16px'
+                            }}
+                            value={formData.birth_date}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Пароль</label>
                         <input
                             type="password"
                             name="password"
+                            autoComplete="new-password"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
@@ -190,12 +216,11 @@ function Register() {
                     </div>
                     
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                            Подтвердите пароль
-                        </label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Подтвердите пароль</label>
                         <input
                             type="password"
                             name="confirmPassword"
+                            autoComplete="new-password"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
