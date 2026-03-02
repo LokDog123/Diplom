@@ -288,3 +288,137 @@
     r: 8;
   }
 }
+
+
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+}
+
+.action-button.save {
+    background: #27ae60;
+}
+
+.action-button.cancel {
+    background: #95a5a6;
+}
+
+.action-button.edit {
+    background: #f39c12;
+}
+
+.action-button.delete {
+    background: #e74c3c;
+}
+
+.custom-tooltip {
+    background: white;
+    padding: 10px 15px;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.tooltip-date {
+    margin: 0 0 5px;
+    font-weight: 600;
+}
+
+.tooltip-value {
+    margin: 0;
+}
+
+.tooltip-warning {
+    margin: 5px 0 0;
+    color: #e74c3c;
+    font-size: 12px;
+}
+
+.tooltip-norm, .tooltip-age {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-icon {
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    margin-bottom: 10px;
+}
+
+.modal-text {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.modal-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+}
+
+.modal-button.confirm-delete {
+    background: #e74c3c;
+}
+
+.modal-button.cancel {
+    background: #95a5a6;
+}
+
+.abnormal-value {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.warning-icon {
+    margin-left: 5px;
+}
+
+.add-first-measurement {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
