@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Plus, AlertCircle, Check, X, Baby, Apple } from 'lucide-react';
+import { Plus, AlertCircle, Check, X, Baby, Apple, Edit, Trash2, Save } from 'lucide-react';
 import axios from 'axios';
 
 function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
     const [showAddForm, setShowAddForm] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [newFeeding, setNewFeeding] = useState({
         date: new Date().toISOString().split('T')[0],
         foodType: '',
         reaction: 'normal',
         notes: ''
     });
-    const [loading, setLoading] = useState(false);
 
     const foodTypes = [
         'Грудное молоко',
@@ -43,11 +45,17 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
         try {
             const response = await axios.post('http://localhost:5000/api/feeding', {
                 child_id,
-                ...newFeeding
+                date: newFeeding.date,
+                foodType: newFeeding.foodType,
+                reaction: newFeeding.reaction,
+                notes: newFeeding.notes
             });
 
             if (response.data.success) {
-                setFeedingData([...feedingData, { ...newFeeding, id: response.data.id }]);
+                // Получаем обновленный список записей
+                const updatedResponse = await axios.get(`http://localhost:5000/api/feeding/child/${child_id}`);
+                setFeedingData(updatedResponse.data.feeding);
+                
                 setShowAddForm(false);
                 setNewFeeding({
                     date: new Date().toISOString().split('T')[0],
@@ -58,10 +66,78 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
             }
         } catch (error) {
             console.error('Ошибка при добавлении:', error);
-            alert('Ошибка при сохранении');
+            alert('Ошибка при сохранении: ' + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleUpdateFeeding = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        
+        try {
+            const response = await axios.put(`http://localhost:5000/api/feeding/${editingId}`, {
+                date: newFeeding.date,
+                foodType: newFeeding.foodType,
+                reaction: newFeeding.reaction,
+                notes: newFeeding.notes
+            });
+
+            if (response.data.success) {
+                // Получаем обновленный список записей
+                const updatedResponse = await axios.get(`http://localhost:5000/api/feeding/child/${child_id}`);
+                setFeedingData(updatedResponse.data.feeding);
+                
+                setEditingId(null);
+                setNewFeeding({
+                    date: new Date().toISOString().split('T')[0],
+                    foodType: '',
+                    reaction: 'normal',
+                    notes: ''
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка при обновлении:', error);
+            alert('Ошибка при обновлении: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteFeeding = async (feedingId) => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/feeding/${feedingId}`);
+            
+            if (response.data.success) {
+                // Обновляем список записей
+                setFeedingData(feedingData.filter(item => item.feeding_id !== feedingId));
+                setShowDeleteConfirm(null);
+            }
+        } catch (error) {
+            console.error('Ошибка при удалении:', error);
+            alert('Ошибка при удалении: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const startEdit = (item) => {
+        setEditingId(item.feeding_id);
+        setNewFeeding({
+            date: item.date.split('T')[0],
+            foodType: item.food_introduced || item.feeding_type,
+            reaction: item.reaction || 'normal',
+            notes: item.notes || ''
+        });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setNewFeeding({
+            date: new Date().toISOString().split('T')[0],
+            foodType: '',
+            reaction: 'normal',
+            notes: ''
+        });
     };
 
     const getReactionInfo = (reactionValue) => {
@@ -81,10 +157,10 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
                 </button>
             </div>
 
-            {showAddForm && (
+            {(showAddForm || editingId) && (
                 <div className="add-feeding-form">
-                    <h3>Новая запись о питании</h3>
-                    <form onSubmit={handleAddFeeding}>
+                    <h3>{editingId ? 'Редактировать запись' : 'Новая запись о питании'}</h3>
+                    <form onSubmit={editingId ? handleUpdateFeeding : handleAddFeeding}>
                         <div className="form-group">
                             <label>Дата</label>
                             <input
@@ -142,9 +218,11 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
 
                         <div className="form-actions">
                             <button type="submit" className="save-btn" disabled={loading}>
+                                <Save size={16} />
                                 {loading ? 'Сохранение...' : 'Сохранить'}
                             </button>
-                            <button type="button" className="cancel-btn" onClick={() => setShowAddForm(false)}>
+                            <button type="button" className="cancel-btn" onClick={cancelEdit}>
+                                <X size={16} />
                                 Отмена
                             </button>
                         </div>
@@ -155,15 +233,15 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
             <div className="feeding-history">
                 {feedingData.length > 0 ? (
                     <div className="feeding-timeline">
-                        {feedingData.sort((a, b) => new Date(b.date) - new Date(a.date)).map((item, index) => {
+                        {feedingData.sort((a, b) => new Date(b.date) - new Date(a.date)).map((item) => {
                             const reaction = getReactionInfo(item.reaction);
                             return (
-                                <div key={index} className="feeding-item">
+                                <div key={item.feeding_id} className="feeding-item">
                                     <div className="feeding-date">{formatDate(item.date)}</div>
                                     <div className="feeding-content">
                                         <div className="feeding-header">
                                             <Apple size={16} color="#3498db" />
-                                            <span className="feeding-food">{item.foodType}</span>
+                                            <span className="feeding-food">{item.food_introduced || item.feeding_type}</span>
                                             <span 
                                                 className="feeding-reaction"
                                                 style={{ 
@@ -175,11 +253,53 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
                                                 {item.reaction === 'normal' ? <Check size={12} /> : <AlertCircle size={12} />}
                                                 {reaction.label}
                                             </span>
+                                            <div className="feeding-actions">
+                                                <button
+                                                    onClick={() => startEdit(item)}
+                                                    className="icon-btn edit-btn"
+                                                    title="Редактировать"
+                                                >
+                                                    <Edit size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => setShowDeleteConfirm(item.feeding_id)}
+                                                    className="icon-btn delete-btn"
+                                                    title="Удалить"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
                                         </div>
                                         {item.notes && (
                                             <div className="feeding-notes">{item.notes}</div>
                                         )}
                                     </div>
+
+                                    {/* Модальное окно подтверждения удаления */}
+                                    {showDeleteConfirm === item.feeding_id && (
+                                        <div className="delete-confirm-overlay">
+                                            <div className="delete-confirm-modal">
+                                                <p>Удалить запись о питании?</p>
+                                                <p className="delete-confirm-details">
+                                                    {item.food_introduced || item.feeding_type} - {formatDate(item.date)}
+                                                </p>
+                                                <div className="delete-confirm-actions">
+                                                    <button
+                                                        onClick={() => handleDeleteFeeding(item.feeding_id)}
+                                                        className="confirm-delete-btn"
+                                                    >
+                                                        Удалить
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setShowDeleteConfirm(null)}
+                                                        className="cancel-delete-btn"
+                                                    >
+                                                        Отмена
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}

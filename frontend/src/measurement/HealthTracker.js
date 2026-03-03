@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Plus, AlertCircle, Thermometer, Droplet, Pill, Activity } from 'lucide-react';
+import { Plus, AlertCircle, Thermometer, Droplet, Pill, Activity, Edit, Trash2, Save, X } from 'lucide-react';
 import axios from 'axios';
 
 function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
     const [showAddForm, setShowAddForm] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [newHealth, setNewHealth] = useState({
         date: new Date().toISOString().split('T')[0],
         type: 'toilet',
         value: '',
         notes: ''
     });
-    const [loading, setLoading] = useState(false);
 
     const healthTypes = [
         { value: 'toilet', label: 'Поход в туалет', icon: Droplet },
@@ -34,11 +36,16 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
         try {
             const response = await axios.post('http://localhost:5000/api/health', {
                 child_id,
-                ...newHealth
+                date: newHealth.date,
+                type: newHealth.type,
+                value: newHealth.value,
+                notes: newHealth.notes
             });
 
             if (response.data.success) {
-                setHealthData([...healthData, { ...newHealth, id: response.data.id }]);
+                const updatedResponse = await axios.get(`http://localhost:5000/api/health/child/${child_id}`);
+                setHealthData(updatedResponse.data.health);
+                
                 setShowAddForm(false);
                 setNewHealth({
                     date: new Date().toISOString().split('T')[0],
@@ -49,16 +56,81 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
             }
         } catch (error) {
             console.error('Ошибка при добавлении:', error);
-            alert('Ошибка при сохранении');
+            alert('Ошибка при сохранении: ' + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
     };
 
+    const handleUpdateHealth = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        
+        try {
+            const response = await axios.put(`http://localhost:5000/api/health/${editingId}`, {
+                date: newHealth.date,
+                type: newHealth.type,
+                value: newHealth.value,
+                notes: newHealth.notes
+            });
+
+            if (response.data.success) {
+                const updatedResponse = await axios.get(`http://localhost:5000/api/health/child/${child_id}`);
+                setHealthData(updatedResponse.data.health);
+                
+                setEditingId(null);
+                setNewHealth({
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'toilet',
+                    value: '',
+                    notes: ''
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка при обновлении:', error);
+            alert('Ошибка при обновлении: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteHealth = async (healthId) => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/health/${healthId}`);
+            
+            if (response.data.success) {
+                setHealthData(healthData.filter(item => item.health_id !== healthId));
+                setShowDeleteConfirm(null);
+            }
+        } catch (error) {
+            console.error('Ошибка при удалении:', error);
+            alert('Ошибка при удалении: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const startEdit = (item) => {
+        setEditingId(item.health_id);
+        setNewHealth({
+            date: item.date.split('T')[0],
+            type: item.type,
+            value: item.value || '',
+            notes: item.notes || ''
+        });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setNewHealth({
+            date: new Date().toISOString().split('T')[0],
+            type: 'toilet',
+            value: '',
+            notes: ''
+        });
+    };
+
     const getHealthIcon = (type) => {
         const healthType = healthTypes.find(t => t.value === type);
-        if (!healthType) return Activity;
-        return healthType.icon;
+        return healthType?.icon || Activity;
     };
 
     const getHealthLabel = (item) => {
@@ -66,7 +138,13 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
             const option = toiletOptions.find(o => o.value === item.value);
             return option ? option.label : item.value;
         }
-        return item.value;
+        if (item.type === 'temperature' && item.value) {
+            return `${item.value}°C`;
+        }
+        if (item.type === 'spitup' && item.value) {
+            return `${item.value} раз`;
+        }
+        return item.value || '';
     };
 
     return (
@@ -82,10 +160,10 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
                 </button>
             </div>
 
-            {showAddForm && (
+            {(showAddForm || editingId) && (
                 <div className="add-health-form">
-                    <h3>Новая запись о здоровье</h3>
-                    <form onSubmit={handleAddHealth}>
+                    <h3>{editingId ? 'Редактировать запись' : 'Новая запись о здоровье'}</h3>
+                    <form onSubmit={editingId ? handleUpdateHealth : handleAddHealth}>
                         <div className="form-group">
                             <label>Дата</label>
                             <input
@@ -187,9 +265,11 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
 
                         <div className="form-actions">
                             <button type="submit" className="save-btn" disabled={loading}>
+                                <Save size={16} />
                                 {loading ? 'Сохранение...' : 'Сохранить'}
                             </button>
-                            <button type="button" className="cancel-btn" onClick={() => setShowAddForm(false)}>
+                            <button type="button" className="cancel-btn" onClick={cancelEdit}>
+                                <X size={16} />
                                 Отмена
                             </button>
                         </div>
@@ -200,23 +280,23 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
             <div className="health-history">
                 {healthData.length > 0 ? (
                     <div className="health-timeline">
-                        {healthData.sort((a, b) => new Date(b.date) - new Date(a.date)).map((item, index) => {
+                        {healthData.sort((a, b) => new Date(b.date) - new Date(a.date)).map((item) => {
                             const Icon = getHealthIcon(item.type);
                             const healthType = healthTypes.find(t => t.value === item.type);
                             
                             let bgColor = '#3498db20';
                             let textColor = '#3498db';
                             
-                            if (item.type === 'temperature' && item.value > 37.5) {
+                            if (item.type === 'temperature' && parseFloat(item.value) > 37.5) {
                                 bgColor = '#e74c3c20';
                                 textColor = '#e74c3c';
-                            } else if (item.type === 'spitup' && item.value > 3) {
+                            } else if (item.type === 'spitup' && parseInt(item.value) > 3) {
                                 bgColor = '#e74c3c20';
                                 textColor = '#e74c3c';
                             }
 
                             return (
-                                <div key={index} className="health-item">
+                                <div key={item.health_id} className="health-item">
                                     <div className="health-date">{formatDate(item.date)}</div>
                                     <div className="health-content">
                                         <div className="health-header">
@@ -229,11 +309,53 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
                                                     {getHealthLabel(item)}
                                                 </span>
                                             )}
+                                            <div className="health-actions">
+                                                <button
+                                                    onClick={() => startEdit(item)}
+                                                    className="icon-btn edit-btn"
+                                                    title="Редактировать"
+                                                >
+                                                    <Edit size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => setShowDeleteConfirm(item.health_id)}
+                                                    className="icon-btn delete-btn"
+                                                    title="Удалить"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
                                         </div>
                                         {item.notes && (
                                             <div className="health-notes">{item.notes}</div>
                                         )}
                                     </div>
+
+                                    {/* Модальное окно подтверждения удаления */}
+                                    {showDeleteConfirm === item.health_id && (
+                                        <div className="delete-confirm-overlay">
+                                            <div className="delete-confirm-modal">
+                                                <p>Удалить запись о здоровье?</p>
+                                                <p className="delete-confirm-details">
+                                                    {healthType?.label} - {formatDate(item.date)}
+                                                </p>
+                                                <div className="delete-confirm-actions">
+                                                    <button
+                                                        onClick={() => handleDeleteHealth(item.health_id)}
+                                                        className="confirm-delete-btn"
+                                                    >
+                                                        Удалить
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setShowDeleteConfirm(null)}
+                                                        className="cancel-delete-btn"
+                                                    >
+                                                        Отмена
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}

@@ -65,6 +65,27 @@ class Feeding {
         }
     }
 
+    static async update(feeding_id, updateData) {
+        try {
+            return await this.collection().updateOne(
+                { feeding_id },
+                { $set: updateData }
+            );
+        } catch (error) {
+            console.error('❌ Ошибка в Feeding.update:', error);
+            throw error;
+        }
+    }
+
+    static async delete(feeding_id) {
+        try {
+            return await this.collection().deleteOne({ feeding_id });
+        } catch (error) {
+            console.error('❌ Ошибка в Feeding.delete:', error);
+            throw error;
+        }
+    }
+
     static async findByChild(child_id) {
         try {
             console.log('🔍 Поиск записей питания для ребенка:', child_id);

@@ -11,4 +11,10 @@ router.get('/child/:child_id', feedingController.getByChild);
 // GET /api/feeding/:feeding_id - получить конкретную запись
 router.get('/:feeding_id', feedingController.getById);
 
+// PUT /api/feeding/:feeding_id - обновить запись
+router.put('/:feeding_id', feedingController.update);
+
+// DELETE /api/feeding/:feeding_id - удалить запись
+router.delete('/:feeding_id', feedingController.delete);
+
 module.exports = router;

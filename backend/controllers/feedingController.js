@@ -88,7 +88,93 @@ const feedingController = {
             });
         }
     },
+    async update(req, res) {
+    try {
+        const { feeding_id } = req.params;
+        const { date, foodType, reaction, notes } = req.body;
+        
+        console.log(`📝 Обновление записи ${feeding_id}:`, { date, foodType, reaction, notes });
 
+        // Определяем тип питания
+        let feeding_type = 'other';
+        let food_introduced = foodType;
+        
+        const foodTypeMap = {
+            'Грудное молоко': 'breast',
+            'Смесь': 'formula',
+            'Пюре': 'puree',
+            'Каша': 'cereal',
+            'Мясо': 'meat',
+            'Фрукты': 'fruit',
+            'Овощи': 'vegetable'
+        };
+        
+        if (foodTypeMap[foodType]) {
+            feeding_type = foodTypeMap[foodType];
+            food_introduced = foodType;
+        }
+
+        const updateData = {
+            date: new Date(date),
+            feeding_type,
+            food_introduced,
+            reaction,
+            notes,
+            updated_at: new Date()
+        };
+
+        const result = await Feeding.update(feeding_id, updateData);
+        
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Запись не найдена" 
+            });
+        }
+        
+        res.json({ 
+            success: true, 
+            message: "Запись обновлена" 
+        });
+        
+    } catch (error) {
+        console.error('❌ Ошибка обновления записи:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: "Ошибка сервера: " + error.message 
+        });
+    }
+},
+
+    async delete(req, res) {
+        try {
+            const { feeding_id } = req.params;
+            
+            console.log(`🗑️ Удаление записи ${feeding_id}`);
+            
+            const result = await Feeding.delete(feeding_id);
+            
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ 
+                    success: false, 
+                    message: "Запись не найдена" 
+                });
+            }
+            
+            res.json({ 
+                success: true, 
+                message: "Запись удалена" 
+            });
+            
+        } catch (error) {
+            console.error('❌ Ошибка удаления записи:', error);
+            res.status(500).json({ 
+                success: false, 
+                message: "Ошибка сервера: " + error.message 
+            });
+        }
+    },
+    
     async getByChild(req, res) {
         try {
             const { child_id } = req.params;
