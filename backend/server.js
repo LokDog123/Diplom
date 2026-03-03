@@ -48,6 +48,9 @@ app.use((err, req, res, next) => {
     });
 });
 
+// В server.js добавьте эту строку с другими маршрутами
+app.use('/api/food-products', require('./routes/foodProductRoutes'));
+
 // Запуск сервера
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

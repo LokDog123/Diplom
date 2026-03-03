@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { Plus, AlertCircle, Check, X, Baby, Apple, Edit, Trash2, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, AlertCircle, Check, X, Baby, Apple, Edit, Trash2, Save, Settings } from 'lucide-react';
 import axios from 'axios';
+import FoodProductManager from './FoodProductManager';
 
 function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
     const [showAddForm, setShowAddForm] = useState(false);
+    const [showProductManager, setShowProductManager] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [foodProducts, setFoodProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [newFeeding, setNewFeeding] = useState({
         date: new Date().toISOString().split('T')[0],
         foodType: '',
@@ -14,20 +18,25 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
         notes: ''
     });
 
-    const foodTypes = [
-        'Грудное молоко',
-        'Смесь',
-        'Овощное пюре',
-        'Фруктовое пюре',
-        'Каша',
-        'Мясное пюре',
-        'Рыбное пюре',
-        'Творог',
-        'Кефир/йогурт',
-        'Яичный желток',
-        'Сок',
-        'Другое'
-    ];
+    // Загружаем продукты при монтировании
+    useEffect(() => {
+        fetchFoodProducts();
+    }, []);
+
+    const fetchFoodProducts = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/food-products');
+            if (response.data.success) {
+                setFoodProducts(response.data.products);
+                
+                // Получаем уникальные категории
+                const uniqueCategories = [...new Set(response.data.products.map(p => p.category))];
+                setCategories(uniqueCategories);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки продуктов:', error);
+        }
+    };
 
     const reactions = [
         { value: 'normal', label: 'Нормально', color: '#27ae60' },
@@ -52,7 +61,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
             });
 
             if (response.data.success) {
-                // Получаем обновленный список записей
                 const updatedResponse = await axios.get(`http://localhost:5000/api/feeding/child/${child_id}`);
                 setFeedingData(updatedResponse.data.feeding);
                 
@@ -85,7 +93,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
             });
 
             if (response.data.success) {
-                // Получаем обновленный список записей
                 const updatedResponse = await axios.get(`http://localhost:5000/api/feeding/child/${child_id}`);
                 setFeedingData(updatedResponse.data.feeding);
                 
@@ -110,7 +117,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
             const response = await axios.delete(`http://localhost:5000/api/feeding/${feedingId}`);
             
             if (response.data.success) {
-                // Обновляем список записей
                 setFeedingData(feedingData.filter(item => item.feeding_id !== feedingId));
                 setShowDeleteConfirm(null);
             }
@@ -144,17 +150,41 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
         return reactions.find(r => r.value === reactionValue) || reactions[0];
     };
 
+    // Группируем продукты по категориям для удобного отображения
+    const productsByCategory = categories.reduce((acc, category) => {
+        acc[category] = foodProducts.filter(p => p.category === category);
+        return acc;
+    }, {});
+
     return (
         <div className="feeding-container">
+            {/* Модальное окно управления продуктами */}
+            {showProductManager && (
+                <FoodProductManager
+                    onClose={() => setShowProductManager(false)}
+                    onUpdate={fetchFoodProducts}
+                />
+            )}
+
             <div className="section-header">
                 <h2 className="section-title">Питание и прикорм</h2>
-                <button 
-                    className="add-feeding-btn"
-                    onClick={() => setShowAddForm(true)}
-                >
-                    <Plus size={16} />
-                    Добавить запись
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button 
+                        className="settings-btn"
+                        onClick={() => setShowProductManager(true)}
+                        title="Управление продуктами"
+                    >
+                        <Settings size={16} />
+                        Продукты
+                    </button>
+                    <button 
+                        className="add-feeding-btn"
+                        onClick={() => setShowAddForm(true)}
+                    >
+                        <Plus size={16} />
+                        Добавить запись
+                    </button>
+                </div>
             </div>
 
             {(showAddForm || editingId) && (
@@ -179,8 +209,14 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
                                 required
                             >
                                 <option value="">Выберите продукт</option>
-                                {foodTypes.map(type => (
-                                    <option key={type} value={type}>{type}</option>
+                                {categories.map(category => (
+                                    <optgroup key={category} label={getCategoryLabel(category)}>
+                                        {productsByCategory[category]?.map(product => (
+                                            <option key={product.product_id} value={product.name}>
+                                                {product.name} {product.is_allergen ? '⚠️' : ''}
+                                            </option>
+                                        ))}
+                                    </optgroup>
                                 ))}
                             </select>
                         </div>
@@ -275,7 +311,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
                                         )}
                                     </div>
 
-                                    {/* Модальное окно подтверждения удаления */}
                                     {showDeleteConfirm === item.feeding_id && (
                                         <div className="delete-confirm-overlay">
                                             <div className="delete-confirm-modal">
@@ -313,6 +348,24 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
             </div>
         </div>
     );
+}
+
+// Вспомогательная функция для перевода категорий
+function getCategoryLabel(category) {
+    const labels = {
+        'milk': 'Молочные продукты',
+        'vegetable': 'Овощи',
+        'fruit': 'Фрукты',
+        'cereal': 'Каши',
+        'meat': 'Мясо',
+        'fish': 'Рыба',
+        'dairy': 'Кисломолочные',
+        'egg': 'Яйца',
+        'drink': 'Напитки',
+        'nuts': 'Орехи',
+        'other': 'Другое'
+    };
+    return labels[category] || category;
 }
 
 export default FeedingTracker;
