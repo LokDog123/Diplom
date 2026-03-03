@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Link уже есть в этой строке, проверьте что он точно здесь
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ChildHeader from '../measurement/ChildHeader';
 import ChildStats from '../measurement/ChildStats';
 import ChildCharts from '../measurement/ChildCharts';
 import MeasurementsHistory from '../measurement/MeasurementsHistory';
+import FeedingTracker from '../measurement/FeedingTracker';
+import HealthTracker from '../measurement/HealthTracker';
+import WeightAnalytics from '../measurement/WeightAnalytics';
 import DeleteConfirmModal from '../measurement/DeleteConfirmModal';
 import './ChildProfile.css';
 
@@ -13,8 +16,11 @@ function ChildProfile() {
     const navigate = useNavigate();
     const [child, setChild] = useState(null);
     const [measurements, setMeasurements] = useState([]);
+    const [feedingData, setFeedingData] = useState([]);
+    const [healthData, setHealthData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeChart, setActiveChart] = useState('height');
+    const [activeTab, setActiveTab] = useState('measurements'); // 'measurements', 'feeding', 'health', 'weight'
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({
         name: '',
@@ -34,6 +40,7 @@ function ChildProfile() {
 
     const fetchChildData = useCallback(async () => {
         try {
+            // Загружаем данные ребенка
             const childResponse = await axios.get(`http://localhost:5000/api/children/${child_id}`);
             if (childResponse.data.success) {
                 setChild(childResponse.data.child);
@@ -44,6 +51,7 @@ function ChildProfile() {
                 });
             }
 
+            // Загружаем замеры
             const measurementsResponse = await axios.get(`http://localhost:5000/api/measurements/child/${child_id}`);
             if (measurementsResponse.data.success) {
                 const sortedMeasurements = measurementsResponse.data.measurements.sort((a, b) => 
@@ -51,6 +59,19 @@ function ChildProfile() {
                 );
                 setMeasurements(sortedMeasurements);
             }
+
+            // Загружаем данные о питании
+            const feedingResponse = await axios.get(`http://localhost:5000/api/feeding/child/${child_id}`);
+            if (feedingResponse.data.success) {
+                setFeedingData(feedingResponse.data.feeding);
+            }
+
+            // Загружаем данные о здоровье
+            const healthResponse = await axios.get(`http://localhost:5000/api/health/child/${child_id}`);
+            if (healthResponse.data.success) {
+                setHealthData(healthResponse.data.health);
+            }
+
         } catch (error) {
             console.error('Ошибка загрузки:', error);
         } finally {
@@ -136,24 +157,83 @@ function ChildProfile() {
                 onCancel={() => setShowDeleteConfirm(false)}
             />
 
-            <ChildStats measurements={measurements} />
+            {/* Вкладки навигации */}
+            <div className="tabs-container">
+                <button
+                    className={`tab-button ${activeTab === 'measurements' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('measurements')}
+                >
+                    Замеры
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'weight' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('weight')}
+                >
+                    Анализ веса
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'feeding' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('feeding')}
+                >
+                    Питание
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'health' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('health')}
+                >
+                    Здоровье
+                </button>
+            </div>
 
-            <ChildCharts
-                measurements={measurements}
-                child={child}
-                activeChart={activeChart}
-                setActiveChart={setActiveChart}
-                calculateAgeWithPrecision={calculateAgeWithPrecision}
-                formatDate={formatDate}
-            />
+            {activeTab === 'measurements' && (
+                <>
+                    <ChildStats measurements={measurements} />
+                    
+                    <ChildCharts
+                        measurements={measurements}
+                        child={child}
+                        activeChart={activeChart}
+                        setActiveChart={setActiveChart}
+                        calculateAgeWithPrecision={calculateAgeWithPrecision}
+                        formatDate={formatDate}
+                    />
 
-            <MeasurementsHistory
-                measurements={measurements}
-                child={child}
-                child_id={child_id}
-                calculateAgeWithPrecision={calculateAgeWithPrecision}
-                formatDate={formatDate}
-            />
+                    <MeasurementsHistory
+                        measurements={measurements}
+                        child={child}
+                        child_id={child_id}
+                        calculateAgeWithPrecision={calculateAgeWithPrecision}
+                        formatDate={formatDate}
+                    />
+                </>
+            )}
+
+            {activeTab === 'weight' && (
+                <WeightAnalytics
+                    measurements={measurements}
+                    child={child}
+                    calculateAgeWithPrecision={calculateAgeWithPrecision}
+                    formatDate={formatDate}
+                />
+            )}
+
+            {activeTab === 'feeding' && (
+                <FeedingTracker
+                    child_id={child_id}
+                    feedingData={feedingData}
+                    setFeedingData={setFeedingData}
+                    formatDate={formatDate}
+                />
+            )}
+
+            {activeTab === 'health' && (
+                <HealthTracker
+                    child_id={child_id}
+                    healthData={healthData}
+                    setHealthData={setHealthData}
+                    formatDate={formatDate}
+                />
+            )}
         </div>
     );
 }

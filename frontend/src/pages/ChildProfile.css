@@ -422,3 +422,338 @@
     text-decoration: none;
     border-radius: 8px;
 }
+
+/* Вкладки навигации */
+.tabs-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #7f8c8d;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.tab-button:hover {
+    color: #3498db;
+}
+
+.tab-button.active {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #3498db;
+    border-radius: 3px 3px 0 0;
+}
+
+/* Аналитика веса */
+.analytics-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid #e0e6ed;
+}
+
+.section-title {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.weight-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.metric-card {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e0e6ed;
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.metric-header h3 {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin: 0;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.metric-status {
+    font-size: 12px;
+}
+
+/* Питание */
+.feeding-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid #e0e6ed;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.add-feeding-btn, .add-health-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.add-feeding-form, .add-health-form {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e0e6ed;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e0e6ed;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.reaction-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.reaction-option {
+    padding: 6px 12px;
+    border: 1px solid;
+    border-radius: 20px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.reaction-option.selected {
+    color: white;
+}
+
+.health-type-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.health-type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.health-type-btn:hover {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.health-type-btn.selected {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.toilet-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.toilet-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: 1px solid #e0e6ed;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.toilet-btn.selected {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.save-btn, .cancel-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background: #27ae60;
+    color: white;
+}
+
+.cancel-btn {
+    background: #95a5a6;
+    color: white;
+}
+
+/* История питания и здоровья */
+.feeding-timeline, .health-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feeding-item, .health-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #e0e6ed;
+}
+
+.feeding-date, .health-date {
+    min-width: 100px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.feeding-content, .health-content {
+    flex: 1;
+}
+
+.feeding-header, .health-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
+
+.feeding-food {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.feeding-reaction {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    border: 1px solid;
+}
+
+.feeding-notes, .health-notes {
+    color: #7f8c8d;
+    font-size: 13px;
+    margin-top: 5px;
+    padding-left: 5px;
+    border-left: 2px solid #e0e6ed;
+}
+
+.health-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.health-type {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.health-value {
+    font-size: 13px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #f0f4f8;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+}
+
+.empty-state p {
+    margin-top: 10px;
+}
