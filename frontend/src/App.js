@@ -9,7 +9,7 @@ import ParentProfile from './pages/ParentProfile';
 import ChildProfile from './pages/ChildProfile';
 import AddMeasurement from './pages/AddMeasurement';
 
-// Простой компонент для защиты маршрутов
+
 const PrivateRoute = ({ children }) => {
     const user = localStorage.getItem('user');
     return user ? children : <Navigate to="/login" />;

@@ -1,59 +1,38 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Baby } from 'lucide-react';
+import { registerSchema } from '../schemas/validationSchemas';
+import { Baby, AlertCircle } from 'lucide-react';
 
 function Register() {
-    const [formData, setFormData] = useState({
-        lastname: '',
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const { register } = useAuth();
+    const { register: registerUser } = useAuth();
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-        setError('');
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (formData.password !== formData.confirmPassword) {
-            setError('Пароли не совпадают');
-            return;
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            name: '',
+            lastname: '',
+            email: '',
+            phone: '',
+            birth_date: '',
+            password: '',
+            confirmPassword: ''
         }
+    });
 
-        if (formData.password.length < 6) {
-            setError('Пароль должен быть не менее 6 символов');
-            return;
-        }
-
-        if (!formData.email.includes('@')) {
-            setError('Введите корректный email');
-            return;
-        }
-        
-        setLoading(true);
-        
-        const success = await register(
-            formData.name,
-            formData.lastname,
-            formData.email,
-            formData.password,
-            formData.confirmPassword
+    const onSubmit = async (data) => {
+        const success = await registerUser(
+            data.name,
+            data.lastname,
+            data.email,
+            data.password,
+            data.confirmPassword,
+            data.phone,
+            data.birth_date
         );
-        
-        setLoading(false);
-        
         if (success) {
             alert('Регистрация успешна!');
             navigate('/login');
@@ -67,196 +46,290 @@ function Register() {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '20px',
-            background: 'linear-gradient(135deg, #f5f7fa 0%, #e9eef5 100%)'
+            background: '#f5f7fa'
         }}>
             <div style={{
-                maxWidth: '400px',
+                maxWidth: '500px',
                 width: '100%',
                 padding: '40px',
-                background: 'white',
+                background: '#ffffff',
                 borderRadius: '20px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                border: '1px solid #e2e8f0',
+                position: 'relative'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                     <Baby size={48} color="#3498db" style={{ marginBottom: '15px' }} />
-                    <h1 style={{ fontSize: '24px', color: '#2c3e50', marginBottom: '10px' }}>
+                    <h1 style={{ fontSize: '24px', color: '#1e293b', marginBottom: '10px' }}>
                         ChildGrowth Tracker
                     </h1>
-                    <p style={{ color: '#7f8c8d' }}>Создайте новый аккаунт</p>
+                    <p style={{ color: '#64748b' }}>Создайте новый аккаунт</p>
                 </div>
-                
-                {error && (
-                    <div style={{
-                        backgroundColor: '#f8d7da',
-                        color: '#721c24',
-                        padding: '10px',
-                        borderRadius: '8px',
-                        marginBottom: '20px',
-                        textAlign: 'center'
-                    }}>
-                        {error}
-                    </div>
-                )}
-                
-                <form onSubmit={handleSubmit}>
+
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    {/* Имя */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Имя</label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Имя <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
                         <input
                             type="text"
-                            name="name"
+                            {...register('name')}
                             autoComplete="given-name"
+                            placeholder="Иван"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.name ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            placeholder="Иван"
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.name) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.name && (
+                            <p style={{
+                                color: '#ef4444',
+                                fontSize: '12px',
+                                marginTop: '5px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                            }}>
+                                <AlertCircle size={12} />
+                                {errors.name.message}
+                            </p>
+                        )}
                     </div>
-                    
+
+                    {/* Фамилия */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Фамилия</label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Фамилия <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
                         <input
                             type="text"
-                            name="lastname"
+                            {...register('lastname')}
                             autoComplete="family-name"
+                            placeholder="Петров"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.lastname ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.lastname}
-                            onChange={handleChange}
-                            required
-                            placeholder="Петров"
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.lastname) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.lastname && (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px' }}>
+                                {errors.lastname.message}
+                            </p>
+                        )}
                     </div>
-                    
+
+                    {/* Email */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Email</label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Email <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
                         <input
                             type="email"
-                            name="email"
-                            autoComplete="email"  // ВАЖНО: для запоминания email
+                            {...register('email')}
+                            autoComplete="email"
+                            placeholder="your@email.com"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.email ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            placeholder="your@email.com"
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.email) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.email && (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px' }}>
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
-                    
+
+                    {/* Телефон */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Телефон</label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Телефон
+                        </label>
                         <input
                             type="tel"
-                            name="phone"
+                            {...register('phone')}
                             autoComplete="tel"
+                            placeholder="+375 (29) 999-99-99"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.phone ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.phone}
-                            onChange={handleChange}
-                            placeholder="+7 (999) 999-99-99"
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.phone) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.phone && (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px' }}>
+                                {errors.phone.message}
+                            </p>
+                        )}
                     </div>
 
+                    {/* Дата рождения */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Дата рождения</label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Дата рождения
+                        </label>
                         <input
                             type="date"
-                            name="birth_date"
+                            {...register('birth_date')}
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.birth_date ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.birth_date}
-                            onChange={handleChange}
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.birth_date) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.birth_date && (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px' }}>
+                                {errors.birth_date.message}
+                            </p>
+                        )}
                     </div>
 
+                    {/* Пароль */}
                     <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Пароль</label>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Пароль <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
                         <input
                             type="password"
-                            name="password"
+                            {...register('password')}
                             autoComplete="new-password"
+                            placeholder="Минимум 8 символов"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.password ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            placeholder="Минимум 6 символов"
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.password) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.password && (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px' }}>
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
-                    
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>Подтвердите пароль</label>
+
+                    {/* Подтверждение пароля */}
+                    <div style={{ marginBottom: '25px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
+                            Подтвердите пароль <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
                         <input
                             type="password"
-                            name="confirmPassword"
+                            {...register('confirmPassword')}
                             autoComplete="new-password"
+                            placeholder="Повторите пароль"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                border: '2px solid #e0e6ed',
+                                border: `2px solid ${errors.confirmPassword ? '#ef4444' : '#e2e8f0'}`,
                                 borderRadius: '12px',
-                                fontSize: '16px'
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#1e293b',
+                                transition: 'all 0.2s ease'
                             }}
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                            placeholder="••••••••"
+                            onFocus={(e) => e.target.style.borderColor = '#3498db'}
+                            onBlur={(e) => {
+                                if (!errors.confirmPassword) e.target.style.borderColor = '#e2e8f0';
+                            }}
                         />
+                        {errors.confirmPassword && (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px' }}>
+                                {errors.confirmPassword.message}
+                            </p>
+                        )}
                     </div>
-                    
-                    <button 
-                        type="submit" 
+
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
                         style={{
                             width: '100%',
-                            padding: '12px',
-                            background: loading ? '#95a5a6' : '#3498db',
-                            color: 'white',
+                            padding: '14px',
+                            background: isSubmitting ? '#94a3b8' : '#3498db',
+                            color: '#fff',
                             border: 'none',
                             borderRadius: '12px',
                             fontSize: '16px',
                             fontWeight: '600',
-                            cursor: loading ? 'not-allowed' : 'pointer'
+                            cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                            marginBottom: '20px',
+                            transition: 'all 0.2s ease'
                         }}
-                        disabled={loading}
+                        onMouseEnter={(e) => {
+                            if (!isSubmitting) e.target.style.background = '#2980b9';
+                        }}
+                        onMouseLeave={(e) => {
+                            if (!isSubmitting) e.target.style.background = '#3498db';
+                        }}
                     >
-                        {loading ? 'Регистрация...' : 'Зарегистрироваться'}
+                        {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
                     </button>
+
+                    <p style={{ textAlign: 'center', color: '#64748b' }}>
+                        Уже есть аккаунт?{' '}
+                        <Link to="/login" style={{ color: '#3498db', textDecoration: 'none', fontWeight: '500' }}>
+                            Войти
+                        </Link>
+                    </p>
                 </form>
-                
-                <p style={{ textAlign: 'center', marginTop: '20px', color: '#7f8c8d' }}>
-                    Уже есть аккаунт? <Link to="/login" style={{ color: '#3498db', textDecoration: 'none' }}>Войти</Link>
-                </p>
             </div>
         </div>
     );

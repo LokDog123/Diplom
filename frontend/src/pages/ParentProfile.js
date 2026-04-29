@@ -44,11 +44,10 @@ function ParentProfile() {
 
         try {
             const response = await axios.put(`http://localhost:5000/api/parents/${user.parent_id}`, formData);
-            
+
             if (response.data.success) {
                 setMessage({ type: 'success', text: 'Профиль обновлен!' });
                 setIsEditing(false);
-                // Обновляем данные в контексте
                 const updatedUser = { ...user, ...formData };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
             }
@@ -64,21 +63,36 @@ function ParentProfile() {
         navigate('/login');
     };
 
+    const inputStyle = (isEditing) => ({
+        width: '100%',
+        padding: '12px',
+        border: '1px solid var(--border)',
+        borderRadius: '10px',
+        fontSize: '16px',
+        backgroundColor: isEditing ? 'var(--input-bg)' : 'var(--bg-tertiary)',
+        color: 'var(--text-primary)'
+    });
+
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' }}>
-            <button 
+        <div style={{
+            maxWidth: '800px',
+            margin: '0 auto',
+            padding: '40px 20px',
+            color: 'var(--text-primary)'
+        }}>
+            <button
                 onClick={() => navigate('/dashboard')}
                 style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
                     padding: '10px 20px',
-                    border: 'none',
-                    background: '#f0f4f8',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-tertiary)',
                     borderRadius: '10px',
                     cursor: 'pointer',
                     marginBottom: '30px',
-                    color: '#2c3e50'
+                    color: 'var(--text-primary)'
                 }}
             >
                 <ArrowLeft size={20} />
@@ -86,17 +100,23 @@ function ParentProfile() {
             </button>
 
             <div style={{
-                background: 'white',
+                background: 'var(--bg-card)',
                 borderRadius: '20px',
                 padding: '40px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+                boxShadow: 'var(--shadow-lg)',
+                border: '1px solid var(--border)'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px' }}>
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px',
+                    marginBottom: '30px'
+                }}>
                     <div style={{
                         width: '80px',
                         height: '80px',
                         borderRadius: '50%',
-                        background: '#3498db',
+                        background: 'var(--primary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -104,20 +124,27 @@ function ParentProfile() {
                         <User size={40} color="white" />
                     </div>
                     <div>
-                        <h1 style={{ fontSize: '28px', color: '#2c3e50' }}>
+                        <h1 style={{ fontSize: '28px', color: 'var(--text-primary)' }}>
                             {user?.name} {user?.lastname}
                         </h1>
-                        <p style={{ color: '#7f8c8d' }}>Профиль родителя</p>
+                        <p style={{ color: 'var(--text-secondary)' }}>
+                            Профиль родителя
+                        </p>
                     </div>
                 </div>
 
                 {message && (
                     <div style={{
                         padding: '15px',
-                        backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
-                        color: message.type === 'success' ? '#155724' : '#721c24',
+                        backgroundColor: message.type === 'success'
+                            ? 'rgba(16, 185, 129, 0.1)'
+                            : 'rgba(239, 68, 68, 0.1)',
+                        color: message.type === 'success'
+                            ? 'var(--success)'
+                            : 'var(--danger)',
                         borderRadius: '8px',
-                        marginBottom: '20px'
+                        marginBottom: '20px',
+                        border: `1px solid ${message.type === 'success' ? 'var(--success)' : 'var(--danger)'}`
                     }}>
                         {message.text}
                     </div>
@@ -125,10 +152,11 @@ function ParentProfile() {
 
                 <form onSubmit={handleSubmit}>
                     <div style={{ display: 'grid', gap: '20px' }}>
+
+                        {/* Имя */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                                <User size={16} style={{ marginRight: '5px' }} />
-                                Имя
+                            <label style={{ color: 'var(--text-secondary)' }}>
+                                <User size={16} /> Имя
                             </label>
                             <input
                                 type="text"
@@ -136,21 +164,14 @@ function ParentProfile() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 disabled={!isEditing}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    border: '2px solid #e0e6ed',
-                                    borderRadius: '10px',
-                                    fontSize: '16px',
-                                    backgroundColor: isEditing ? 'white' : '#f9f9f9'
-                                }}
+                                style={inputStyle(isEditing)}
                             />
                         </div>
 
+                        {/* Фамилия */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                                <User size={16} style={{ marginRight: '5px' }} />
-                                Фамилия
+                            <label style={{ color: 'var(--text-secondary)' }}>
+                                <User size={16} /> Фамилия
                             </label>
                             <input
                                 type="text"
@@ -158,21 +179,14 @@ function ParentProfile() {
                                 value={formData.lastname}
                                 onChange={handleChange}
                                 disabled={!isEditing}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    border: '2px solid #e0e6ed',
-                                    borderRadius: '10px',
-                                    fontSize: '16px',
-                                    backgroundColor: isEditing ? 'white' : '#f9f9f9'
-                                }}
+                                style={inputStyle(isEditing)}
                             />
                         </div>
 
+                        {/* Email */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                                <Mail size={16} style={{ marginRight: '5px' }} />
-                                Email
+                            <label style={{ color: 'var(--text-secondary)' }}>
+                                <Mail size={16} /> Email
                             </label>
                             <input
                                 type="email"
@@ -180,21 +194,14 @@ function ParentProfile() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 disabled={!isEditing}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    border: '2px solid #e0e6ed',
-                                    borderRadius: '10px',
-                                    fontSize: '16px',
-                                    backgroundColor: isEditing ? 'white' : '#f9f9f9'
-                                }}
+                                style={inputStyle(isEditing)}
                             />
                         </div>
 
+                        {/* Телефон */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                                <Phone size={16} style={{ marginRight: '5px' }} />
-                                Телефон
+                            <label style={{ color: 'var(--text-secondary)' }}>
+                                <Phone size={16} /> Телефон
                             </label>
                             <input
                                 type="tel"
@@ -202,22 +209,14 @@ function ParentProfile() {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 disabled={!isEditing}
-                                placeholder="+7 (999) 999-99-99"
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    border: '2px solid #e0e6ed',
-                                    borderRadius: '10px',
-                                    fontSize: '16px',
-                                    backgroundColor: isEditing ? 'white' : '#f9f9f9'
-                                }}
+                                style={inputStyle(isEditing)}
                             />
                         </div>
 
+                        {/* Дата */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#34495e' }}>
-                                <Calendar size={16} style={{ marginRight: '5px' }} />
-                                Дата рождения
+                            <label style={{ color: 'var(--text-secondary)' }}>
+                                <Calendar size={16} /> Дата рождения
                             </label>
                             <input
                                 type="date"
@@ -225,14 +224,7 @@ function ParentProfile() {
                                 value={formData.birth_date}
                                 onChange={handleChange}
                                 disabled={!isEditing}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    border: '2px solid #e0e6ed',
-                                    borderRadius: '10px',
-                                    fontSize: '16px',
-                                    backgroundColor: isEditing ? 'white' : '#f9f9f9'
-                                }}
+                                style={inputStyle(isEditing)}
                             />
                         </div>
                     </div>
@@ -244,12 +236,10 @@ function ParentProfile() {
                                 onClick={() => setIsEditing(true)}
                                 style={{
                                     padding: '12px 30px',
-                                    background: '#3498db',
+                                    background: 'var(--primary)',
                                     color: 'white',
                                     border: 'none',
-                                    borderRadius: '10px',
-                                    fontSize: '16px',
-                                    cursor: 'pointer'
+                                    borderRadius: '10px'
                                 }}
                             >
                                 Редактировать
@@ -264,56 +254,41 @@ function ParentProfile() {
                                         alignItems: 'center',
                                         gap: '8px',
                                         padding: '12px 30px',
-                                        background: '#27ae60',
+                                        background: 'var(--success)',
                                         color: 'white',
                                         border: 'none',
-                                        borderRadius: '10px',
-                                        fontSize: '16px',
-                                        cursor: loading ? 'not-allowed' : 'pointer',
-                                        opacity: loading ? 0.7 : 1
+                                        borderRadius: '10px'
                                     }}
                                 >
                                     <Save size={18} />
                                     {loading ? 'Сохранение...' : 'Сохранить'}
                                 </button>
+
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        setIsEditing(false);
-                                        setFormData({
-                                            name: user.name || '',
-                                            lastname: user.lastname || '',
-                                            email: user.email || '',
-                                            phone: user.phone || '',
-                                            birth_date: user.birth_date ? user.birth_date.split('T')[0] : ''
-                                        });
-                                    }}
+                                    onClick={() => setIsEditing(false)}
                                     style={{
                                         padding: '12px 30px',
-                                        background: '#95a5a6',
+                                        background: 'var(--text-muted)',
                                         color: 'white',
                                         border: 'none',
-                                        borderRadius: '10px',
-                                        fontSize: '16px',
-                                        cursor: 'pointer'
+                                        borderRadius: '10px'
                                     }}
                                 >
                                     Отмена
                                 </button>
                             </>
                         )}
-                        
+
                         <button
                             type="button"
                             onClick={handleLogout}
                             style={{
                                 padding: '12px 30px',
-                                background: '#e74c3c',
+                                background: 'var(--danger)',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '10px',
-                                fontSize: '16px',
-                                cursor: 'pointer',
                                 marginLeft: 'auto'
                             }}
                         >

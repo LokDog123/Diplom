@@ -7,8 +7,8 @@ const validateRegistration = (req, res, next) => {
     if (password !== confirmPassword) {
         return res.status(400).json({ success: false, message: "Пароли не совпадают" });
     }
-    if (password.length < 6) {
-        return res.status(400).json({ success: false, message: "Пароль минимум 6 символов" });
+    if (password.length < 8) {
+        return res.status(400).json({ success: false, message: "Пароль минимум 8 символов" });
     }
     
     next();

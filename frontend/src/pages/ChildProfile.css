@@ -1045,3 +1045,37 @@
     width: auto;
     margin: 0;
 }
+/* Стили для PDF экспорта */
+@media print {
+    .export-button,
+    .tab-button,
+    button:not(.no-print) {
+        display: none !important;
+    }
+    
+    #report-content {
+        padding: 20px;
+        background: white;
+    }
+    
+    .container {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Анимация для кнопки экспорта */
+.export-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.export-button:active {
+    transform: scale(0.98);
+}
+
+/* Улучшенные стили для графиков при экспорте */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
