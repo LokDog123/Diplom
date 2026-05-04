@@ -9,6 +9,7 @@ import FeedingTracker from '../measurement/FeedingTracker';
 import HealthTracker from '../measurement/HealthTracker';
 import WeightAnalytics from '../measurement/WeightAnalytics';
 import DeleteConfirmModal from '../measurement/DeleteConfirmModal';
+import VaccinationCalendar from '../components/VaccinationCalendar'; // ДОБАВЛЕНО
 import { Download } from 'lucide-react';
 import { exportToPDF } from '../utils/pdfExport';
 import './ChildProfile.css';
@@ -269,6 +270,13 @@ function ChildProfile() {
                     >
                         Здоровье
                     </button>
+                    {/* ДОБАВЛЕНА ВКЛАДКА ПРИВИВОК */}
+                    <button
+                        className={`tab-button ${activeTab === 'vaccinations' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('vaccinations')}
+                    >
+                        Прививки
+                    </button>
                 </div>
 
                 {activeTab === 'measurements' && (
@@ -317,6 +325,14 @@ function ChildProfile() {
                         child_id={child_id}
                         healthData={healthData}
                         setHealthData={setHealthData}
+                        formatDate={formatDate}
+                    />
+                )}
+
+                {/* ДОБАВЛЕН БЛОК С КАЛЕНДАРЕМ ПРИВИВОК */}
+                {activeTab === 'vaccinations' && (
+                    <VaccinationCalendar 
+                        child_id={child_id} 
                         formatDate={formatDate}
                     />
                 )}
