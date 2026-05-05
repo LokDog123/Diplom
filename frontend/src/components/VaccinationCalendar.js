@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, CheckCircle, AlertCircle, Syringe, Plus, X, Save, Edit, Trash2, RefreshCw } from 'lucide-react';
+import { Calendar, Syringe, Plus, X, Save, Edit, Trash2, RefreshCw } from 'lucide-react';
 import axios from 'axios';
 
 function VaccinationCalendar({ child_id }) {
@@ -22,7 +22,6 @@ function VaccinationCalendar({ child_id }) {
         notes: ''
     });
 
-    // Опции для реакции
     const reactionOptions = [
         { value: 'none', label: 'Нет реакции', color: '#27ae60' },
         { value: 'normal', label: 'Нормальная', color: '#3498db' },
@@ -232,58 +231,218 @@ function VaccinationCalendar({ child_id }) {
                 </div>
             )}
 
-            {/* Форма добавления/редактирования */}
+            {/* Форма добавления/редактирования - ИСПРАВЛЕННАЯ ВЕРСИЯ */}
             {showAddForm && (
-                <div style={{ background: '#f9f9f9', borderRadius: '16px', padding: '25px', marginBottom: '25px' }}>
-                    <h3 style={{ marginTop: 0, marginBottom: '20px' }}>{editingId ? '✏️ Редактировать прививку' : '➕ Добавить прививку'}</h3>
+                <div style={{ 
+                    background: '#f9f9f9', 
+                    borderRadius: '16px', 
+                    padding: '25px', 
+                    marginBottom: '25px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '20px' }}>
+                        {editingId ? '✏️ Редактировать прививку' : '➕ Добавить прививку'}
+                    </h3>
+                    
                     <form onSubmit={editingId ? handleUpdateVaccine : handleAddVaccine}>
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Название прививки</label>
-                            <input type="text" value={formData.vaccine_name} onChange={(e) => setFormData({...formData, vaccine_name: e.target.value})} required style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} placeholder="Название прививки" />
+                        {/* Название прививки - полная ширина */}
+                        <div style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                Название прививки <span style={{ color: '#e74c3c' }}>*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                value={formData.vaccine_name} 
+                                onChange={(e) => setFormData({...formData, vaccine_name: e.target.value})} 
+                                required 
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '12px', 
+                                    borderRadius: '8px', 
+                                    border: '1px solid #ddd',
+                                    fontSize: '14px',
+                                    boxSizing: 'border-box'
+                                }} 
+                                placeholder="Например: АКДС, Корь, краснуха, паротит..." 
+                            />
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                        {/* Дата и доза - 2 колонки */}
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr 1fr', 
+                            gap: '20px', 
+                            marginBottom: '20px' 
+                        }}>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Дата выполнения</label>
-                                <input type="date" value={formData.administered_date} onChange={(e) => setFormData({...formData, administered_date: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                    Дата выполнения
+                                </label>
+                                <input 
+                                    type="date" 
+                                    value={formData.administered_date} 
+                                    onChange={(e) => setFormData({...formData, administered_date: e.target.value})} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '12px', 
+                                        borderRadius: '8px', 
+                                        border: '1px solid #ddd',
+                                        fontSize: '14px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                />
                             </div>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Номер дозы</label>
-                                <input type="number" min="1" max="10" value={formData.dose_number} onChange={(e) => setFormData({...formData, dose_number: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                    Номер дозы
+                                </label>
+                                <input 
+                                    type="number" 
+                                    min="1" 
+                                    max="10" 
+                                    value={formData.dose_number} 
+                                    onChange={(e) => setFormData({...formData, dose_number: e.target.value})} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '12px', 
+                                        borderRadius: '8px', 
+                                        border: '1px solid #ddd',
+                                        fontSize: '14px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                />
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                        {/* Серия и место - 2 колонки */}
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr 1fr', 
+                            gap: '20px', 
+                            marginBottom: '20px' 
+                        }}>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Серия/№ партии</label>
-                                <input type="text" value={formData.batch_number} onChange={(e) => setFormData({...formData, batch_number: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} placeholder="Например: 123456" />
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                    Серия / № партии
+                                </label>
+                                <input 
+                                    type="text" 
+                                    value={formData.batch_number} 
+                                    onChange={(e) => setFormData({...formData, batch_number: e.target.value})} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '12px', 
+                                        borderRadius: '8px', 
+                                        border: '1px solid #ddd',
+                                        fontSize: '14px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                    placeholder="Пример: 123456" 
+                                />
                             </div>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Где сделана / Кто делал</label>
-                                <input type="text" value={formData.administered_by} onChange={(e) => setFormData({...formData, administered_by: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} placeholder="Поликлиника №5, медсестра..." />
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                    Где сделана / Кто делал
+                                </label>
+                                <input 
+                                    type="text" 
+                                    value={formData.administered_by} 
+                                    onChange={(e) => setFormData({...formData, administered_by: e.target.value})} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '12px', 
+                                        borderRadius: '8px', 
+                                        border: '1px solid #ddd',
+                                        fontSize: '14px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                    placeholder="Поликлиника №5, медсестра Иванова" 
+                                />
                             </div>
                         </div>
 
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Реакция на прививку</label>
-                            <select value={formData.reaction} onChange={(e) => setFormData({...formData, reaction: e.target.value})} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}>
+                        {/* Реакция */}
+                        <div style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                Реакция на прививку
+                            </label>
+                            <select 
+                                value={formData.reaction} 
+                                onChange={(e) => setFormData({...formData, reaction: e.target.value})} 
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '12px', 
+                                    borderRadius: '8px', 
+                                    border: '1px solid #ddd',
+                                    fontSize: '14px',
+                                    boxSizing: 'border-box',
+                                    backgroundColor: 'white'
+                                }}
+                            >
                                 {reactionOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </select>
                         </div>
 
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Заметки</label>
-                            <textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} rows="3" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} placeholder="Дополнительная информация..." />
+                        {/* Заметки */}
+                        <div style={{ marginBottom: '25px' }}>
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
+                                Заметки
+                            </label>
+                            <textarea 
+                                value={formData.notes} 
+                                onChange={(e) => setFormData({...formData, notes: e.target.value})} 
+                                rows="3" 
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '12px', 
+                                    borderRadius: '8px', 
+                                    border: '1px solid #ddd',
+                                    fontSize: '14px',
+                                    boxSizing: 'border-box',
+                                    resize: 'vertical',
+                                    fontFamily: 'inherit'
+                                }} 
+                                placeholder="Дополнительная информация о прививке..." 
+                            />
                         </div>
 
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                            <button type="submit" disabled={saving} style={{ padding: '10px 24px', background: saving ? '#95a5a6' : '#27ae60', color: 'white', border: 'none', borderRadius: '8px', cursor: saving ? 'not-allowed' : 'pointer' }}>
-                                <Save size={16} style={{ display: 'inline', marginRight: '5px' }} /> {saving ? 'Сохранение...' : 'Сохранить'}
+                        {/* Кнопки */}
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e0e0e0', paddingTop: '20px' }}>
+                            <button 
+                                type="button" 
+                                onClick={resetForm} 
+                                style={{ 
+                                    padding: '10px 24px', 
+                                    background: '#95a5a6', 
+                                    color: 'white', 
+                                    border: 'none', 
+                                    borderRadius: '8px', 
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                <X size={16} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'middle' }} /> 
+                                Отмена
                             </button>
-                            <button type="button" onClick={resetForm} style={{ padding: '10px 24px', background: '#95a5a6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-                                <X size={16} style={{ display: 'inline', marginRight: '5px' }} /> Отмена
+                            <button 
+                                type="submit" 
+                                disabled={saving} 
+                                style={{ 
+                                    padding: '10px 24px', 
+                                    background: saving ? '#95a5a6' : '#27ae60', 
+                                    color: 'white', 
+                                    border: 'none', 
+                                    borderRadius: '8px', 
+                                    cursor: saving ? 'not-allowed' : 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500'
+                                }}
+                            >
+                                <Save size={16} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'middle' }} /> 
+                                {saving ? 'Сохранение...' : 'Сохранить'}
                             </button>
                         </div>
                     </form>
