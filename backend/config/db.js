@@ -14,7 +14,6 @@ async function connectDB() {
         
         db = client.db(dbName);
         
-        // Проверяем существующие коллекции
         const collections = await db.listCollections().toArray();
         console.log('📚 Существующие коллекции:', collections.map(c => c.name).join(', ') || 'нет');
         

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './themeMeasurement.css';
-import { ArrowLeft, Baby, User, Calendar, Activity, Edit, Trash2, Plus, Save, X } from 'lucide-react';
+import { ArrowLeft, Baby, User, Calendar, Activity, Edit, Trash2, Plus, Save, X, FileText } from 'lucide-react';
 
 function ChildHeader({ 
     child, 
@@ -12,7 +12,8 @@ function ChildHeader({
     setIsEditing, 
     setShowDeleteConfirm, 
     handleEditSubmit,
-    formatDate 
+    formatDate,
+    onDownloadPDF 
 }) {
     const calculateAge = (birthDate) => {
         if (!birthDate) return 'Не указан';
@@ -46,23 +47,23 @@ function ChildHeader({
                 </Link>
                 
                 {!isEditing ? (
-                    <div className="child-info">
+                    <div className="child-info" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                         <div className={`child-avatar ${child.gender === 'male' ? 'male' : 'female'}`}>
                             <Baby size={30} color="white" />
                         </div>
                         
                         <div>
-                            <h1 className="child-name">{child.name}</h1>
-                            <div className="child-details">
-                                <span>
+                            <h1 className="child-name" style={{ margin: '0 0 8px 0' }}>{child.name}</h1>
+                            <div className="child-details" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                                     <User size={14} />
                                     Пол: {child.gender === 'male' ? 'Мальчик' : 'Девочка'}
                                 </span>
-                                <span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                                     <Calendar size={14} />
                                     Дата рождения: {formatDate(child.birth_date)}
                                 </span>
-                                <span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                                     <Activity size={14} />
                                     Возраст: {calculateAge(child.birth_date)}
                                 </span>
