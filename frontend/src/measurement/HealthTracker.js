@@ -331,7 +331,6 @@ function HealthTracker({ child_id, healthData, setHealthData, formatDate }) {
                                         )}
                                     </div>
 
-                                    {/* Модальное окно подтверждения удаления */}
                                     {showDeleteConfirm === item.health_id && (
                                         <div className="delete-confirm-overlay">
                                             <div className="delete-confirm-modal">

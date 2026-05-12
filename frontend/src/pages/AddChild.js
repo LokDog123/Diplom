@@ -59,7 +59,6 @@ function AddChild() {
             color: '#1e293b'
         }}>
 
-            {/* Назад */}
             <button
                 onClick={() => navigate('/dashboard')}
                 style={{
@@ -78,7 +77,6 @@ function AddChild() {
                 Назад
             </button>
 
-            {/* Карточка */}
             <div style={{
                 background: '#ffffff',
                 borderRadius: '20px',
@@ -110,7 +108,6 @@ function AddChild() {
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* Имя */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{
                             display: 'block',
@@ -137,7 +134,6 @@ function AddChild() {
                         />
                     </div>
 
-                    {/* Дата */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{
                             display: 'block',
@@ -163,7 +159,6 @@ function AddChild() {
                         />
                     </div>
 
-                    {/* Пол */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{
                             display: 'block',
@@ -191,7 +186,6 @@ function AddChild() {
                         </select>
                     </div>
 
-                    {/* Кнопка */}
                     <button
                         type="submit"
                         disabled={loading}

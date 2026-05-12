@@ -67,7 +67,6 @@ function Register() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    {/* Имя */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Имя <span style={{ color: '#ef4444' }}>*</span>
@@ -107,7 +106,6 @@ function Register() {
                         )}
                     </div>
 
-                    {/* Фамилия */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Фамилия <span style={{ color: '#ef4444' }}>*</span>
@@ -139,7 +137,6 @@ function Register() {
                         )}
                     </div>
 
-                    {/* Email */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Email <span style={{ color: '#ef4444' }}>*</span>
@@ -171,7 +168,6 @@ function Register() {
                         )}
                     </div>
 
-                    {/* Телефон */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Телефон
@@ -203,7 +199,6 @@ function Register() {
                         )}
                     </div>
 
-                    {/* Дата рождения */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Дата рождения
@@ -233,7 +228,6 @@ function Register() {
                         )}
                     </div>
 
-                    {/* Пароль */}
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Пароль <span style={{ color: '#ef4444' }}>*</span>
@@ -264,8 +258,6 @@ function Register() {
                             </p>
                         )}
                     </div>
-
-                    {/* Подтверждение пароля */}
                     <div style={{ marginBottom: '25px' }}>
                         <label style={{ display: 'block', marginBottom: '8px', color: '#475569', fontWeight: '500' }}>
                             Подтвердите пароль <span style={{ color: '#ef4444' }}>*</span>

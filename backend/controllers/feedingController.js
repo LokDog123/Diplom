@@ -8,12 +8,11 @@ const feedingController = {
             const { 
                 child_id, 
                 date, 
-                foodType,        // с фронтенда приходит как foodType
+                foodType,
                 reaction,
                 notes
             } = req.body;
             
-            // Валидация
             if (!child_id) {
                 return res.status(400).json({ 
                     success: false, 
@@ -35,11 +34,9 @@ const feedingController = {
                 });
             }
 
-            // Определяем тип питания и продукт на основе foodType
             let feeding_type = 'other';
             let food_introduced = foodType;
             
-            // Сопоставление с типами из схемы
             const foodTypeMap = {
                 'Грудное молоко': 'breast',
                 'Смесь': 'formula',
@@ -55,7 +52,6 @@ const feedingController = {
                 food_introduced = foodType;
             }
 
-            // Создаем запись
             const feeding = await Feeding.create({
                 child_id, 
                 date, 
@@ -95,7 +91,6 @@ const feedingController = {
         
         console.log(`📝 Обновление записи ${feeding_id}:`, { date, foodType, reaction, notes });
 
-        // Определяем тип питания
         let feeding_type = 'other';
         let food_introduced = foodType;
         

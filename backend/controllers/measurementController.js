@@ -1,7 +1,6 @@
 const Measurement = require('../models/Measurement');
 
 const measurementController = {
-    // Создание замера со всеми новыми полями
     async create(req, res) {
         try {
             const { 
@@ -23,7 +22,6 @@ const measurementController = {
                 symptoms
             } = req.body;
             
-            // Проверяем, что хотя бы одно поле заполнено
             if (!child_id || !date) {
                 return res.status(400).json({ 
                     success: false, 
@@ -63,7 +61,6 @@ const measurementController = {
         }
     },
 
-    // Получение всех замеров ребенка
     async getByChild(req, res) {
         try {
             const measurements = await Measurement.findByChild(req.params.child_id);
@@ -77,7 +74,6 @@ const measurementController = {
         }
     },
 
-    // Получение конкретного замера по ID
     async getById(req, res) {
         try {
             const measurement = await Measurement.findById(req.params.measurement_id);
@@ -97,7 +93,6 @@ const measurementController = {
         }
     },
 
-    // Обновление замера
     async update(req, res) {
         try {
             const result = await Measurement.update(req.params.measurement_id, req.body);
@@ -123,7 +118,6 @@ const measurementController = {
         }
     },
 
-    // Удаление замера
     async delete(req, res) {
         try {
             const result = await Measurement.delete(req.params.measurement_id);
@@ -149,9 +143,6 @@ const measurementController = {
         }
     },
 
-    // Специализированные методы для новых функций
-
-    // Получение данных о питании
     async getFeedingData(req, res) {
         try {
             const feeding = await Measurement.findFeedingByChild(req.params.child_id);
@@ -165,7 +156,6 @@ const measurementController = {
         }
     },
 
-    // Получение данных о здоровье
     async getHealthData(req, res) {
         try {
             const health = await Measurement.findHealthByChild(req.params.child_id);
@@ -179,7 +169,6 @@ const measurementController = {
         }
     },
 
-    // Получение данных для анализа веса
     async getWeightAnalytics(req, res) {
         try {
             const weightData = await Measurement.findWeightData(req.params.child_id);
@@ -201,7 +190,6 @@ const measurementController = {
         }
     },
 
-    // Массовое добавление замеров
     async createMany(req, res) {
         try {
             const measurements = req.body.measurements;

@@ -69,7 +69,6 @@ function AddMeasurement() {
     <div style={styles.page}>
       <div style={styles.container}>
 
-        {/* HEADER */}
         <div style={styles.header}>
           <Link to={`/child/${child_id}`} style={styles.back}>
             <ArrowLeft size={20} />
@@ -79,14 +78,12 @@ function AddMeasurement() {
           <h1 style={styles.title}>Добавить замер</h1>
         </div>
 
-        {/* ERROR */}
         {error && (
           <div style={styles.error}>
             {error}
           </div>
         )}
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} style={styles.card}>
 
           <div style={styles.field}>
@@ -178,7 +175,6 @@ function AddMeasurement() {
   );
 }
 
-/* СТИЛИ - только светлая тема */
 const styles = {
   page: {
     minHeight: '100vh',

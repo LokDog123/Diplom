@@ -51,7 +51,6 @@ function Login() {
                 border: '1px solid #e2e8f0',
                 position: 'relative'
             }}>
-                {/* HEADER */}
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                     <Baby size={48} color="#3498db" style={{ marginBottom: '15px' }} />
 
@@ -68,7 +67,6 @@ function Login() {
                     </p>
                 </div>
 
-                {/* ERROR */}
                 {error && (
                     <div style={{
                         backgroundColor: '#fee2e2',
@@ -84,7 +82,6 @@ function Login() {
                     </div>
                 )}
 
-                {/* FORM */}
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{
@@ -176,7 +173,6 @@ function Login() {
                     </button>
                 </form>
 
-                {/* FOOTER */}
                 <p style={{
                     textAlign: 'center',
                     marginTop: '24px',

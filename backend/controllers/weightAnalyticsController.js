@@ -85,7 +85,6 @@ const weightAnalyticsController = {
         try {
             const { child_id } = req.params;
             
-            // Получаем последние замеры
             const measurements = await Measurement.findByChild(child_id);
             if (measurements.length < 2) {
                 return res.status(400).json({ 

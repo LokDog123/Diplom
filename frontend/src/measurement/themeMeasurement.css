@@ -67,13 +67,11 @@
   gap: 10px;
 }
 
-/* ИМЯ */
 .child-name {
   font-size: 28px;
   font-weight: 700;
 }
 
-/* ДЕТАЛИ */
 .child-details {
   display: flex;
   gap: 20px;
@@ -115,19 +113,16 @@
   transition: 0.2s;
 }
 
-/* РЕДАКТИРОВАТЬ (оранжевая) */
 .action-button.edit {
   background: #f59e0b;
   color: white;
 }
 
-/* УДАЛИТЬ (красная) */
 .action-button.delete {
   background: #ef4444;
   color: white;
 }
 
-/* ДОБАВИТЬ (синяя) */
 .add-measurement-btn {
   display: flex;
   align-items: center;

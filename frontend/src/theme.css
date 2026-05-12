@@ -1,15 +1,11 @@
-/* theme.css - глобальные переменные для тем */
-/* Убираем обводку для всех элементов */
 * {
     outline: none !important;
 }
 
-/* Но оставляем фокус для доступности (опционально) */
 *:focus-visible {
     outline: 2px solid var(--primary) !important;
     outline-offset: 2px;
 }
-/* Светлая тема (по умолчанию) */
 :root {
     --bg-primary: #f5f7fa;
     --bg-secondary: #ffffff;
@@ -33,32 +29,6 @@
     --warning: #f39c12;
     --male: #3498db;
     --female: #e84393;
-}
-
-/* Темная тема */
-[data-theme="dark"] {
-    --bg-primary: #0f1724;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --bg-card: #1e293b;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --border: #334155;
-    --border-light: #2d3a4e;
-    --header-bg: #1e293b;
-    --shadow: 0 5px 15px rgba(0,0,0,0.3);
-    --shadow-lg: 0 10px 30px rgba(0,0,0,0.4);
-    --input-bg: #0f1724;
-    --hover-bg: #334155;
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --male: #60a5fa;
-    --female: #f472b6;
 }
 
 /* Применяем переменные ко всем элементам */

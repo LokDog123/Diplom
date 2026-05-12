@@ -3,7 +3,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Activity } from 'lucide-react';
 
 function ChildCharts({ measurements, child, activeChart, setActiveChart, calculateAgeWithPrecision, formatDate }) {
-    // Получаем нормативные значения для возраста
     const getNormsForAge = (ageMonths, gender, type) => {
         const norms = {
             height: {

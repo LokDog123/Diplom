@@ -18,7 +18,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
         notes: ''
     });
 
-    // Загружаем продукты при монтировании
     useEffect(() => {
         fetchFoodProducts();
     }, []);
@@ -150,7 +149,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
         return reactions.find(r => r.value === reactionValue) || reactions[0];
     };
 
-    // Группируем продукты по категориям для удобного отображения
     const productsByCategory = categories.reduce((acc, category) => {
         acc[category] = foodProducts.filter(p => p.category === category);
         return acc;
@@ -158,7 +156,6 @@ function FeedingTracker({ child_id, feedingData, setFeedingData, formatDate }) {
 
     return (
         <div className="feeding-container">
-            {/* Модальное окно управления продуктами */}
             {showProductManager && (
                 <FoodProductManager
                     onClose={() => setShowProductManager(false)}

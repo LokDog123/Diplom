@@ -168,9 +168,7 @@ function ChildProfile() {
                 onCancel={() => setShowDeleteConfirm(false)}
             />
 
-            {/* Контент для экспорта в PDF */}
             <div id="report-content" ref={reportRef}>
-                {/* Хедер с кнопками на одной строке */}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -244,7 +242,6 @@ function ChildProfile() {
                     </div>
                 </div>
 
-                {/* Вкладки навигации */}
                 <div className="tabs-container">
                     <button
                         className={`tab-button ${activeTab === 'measurements' ? 'active' : ''}`}
@@ -329,7 +326,6 @@ function ChildProfile() {
                     />
                 )}
 
-                {/* ДОБАВЛЕН БЛОК С КАЛЕНДАРЕМ ПРИВИВОК */}
                 {activeTab === 'vaccinations' && (
                     <VaccinationCalendar 
                         child_id={child_id} 

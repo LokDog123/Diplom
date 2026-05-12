@@ -1,4 +1,3 @@
-// frontend/src/context/AuthContext.js
 import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 
@@ -41,7 +40,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Функция входа - ИСПРАВЛЕНО!
     const login = async (email, password) => {
         setLoading(true);
         try {
@@ -65,13 +63,11 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Функция выхода
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
     };
 
-    // Проверка при загрузке - восстановить пользователя из localStorage
     React.useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {

@@ -143,7 +143,6 @@ const healthController = {
             
             console.log(`📝 Обновление записи здоровья ${health_id}:`, { date, type, value, notes });
 
-            // Проверяем существование записи
             const existingHealth = await Health.findById(health_id);
             if (!existingHealth) {
                 return res.status(404).json({ 
@@ -166,7 +165,6 @@ const healthController = {
                 });
             }
             
-            // Получаем обновленную запись
             const updatedHealth = await Health.findById(health_id);
             
             res.json({ 
@@ -190,7 +188,6 @@ const healthController = {
             
             console.log(`🗑️ Удаление записи здоровья ${health_id}`);
 
-            // Проверяем существование записи
             const existingHealth = await Health.findById(health_id);
             if (!existingHealth) {
                 return res.status(404).json({ 
@@ -222,7 +219,6 @@ const healthController = {
         }
     },
 
-    // Специализированные методы
     async getTemperatureHistory(req, res) {
         try {
             const { child_id } = req.params;

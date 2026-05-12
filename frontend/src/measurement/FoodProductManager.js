@@ -67,10 +67,8 @@ function FoodProductManager({ onClose, onUpdate }) {
 
         try {
             if (editingId) {
-                // Обновление
                 await axios.put(`http://localhost:5000/api/food-products/${editingId}`, formData);
             } else {
-                // Создание
                 await axios.post('http://localhost:5000/api/food-products', formData);
             }
 
@@ -276,7 +274,6 @@ function FoodProductManager({ onClose, onUpdate }) {
                 </div>
             </div>
 
-            {/* Модальное окно подтверждения удаления */}
             {showDeleteConfirm && (
                 <div className="delete-confirm-overlay">
                     <div className="delete-confirm-modal">

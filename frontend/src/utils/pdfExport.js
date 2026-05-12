@@ -8,16 +8,13 @@ export const exportToPDF = async (elementId, filename, childName) => {
         return;
     }
 
-    // Сохраняем оригинальные стили
     const originalOverflow = element.style.overflow;
     const originalHeight = element.style.height;
     
-    // Временно меняем стили для лучшего захвата
     element.style.overflow = 'visible';
     element.style.height = 'auto';
 
     try {
-        // Создаем canvas из элемента
         const canvas = await html2canvas(element, {
             scale: 2, // Увеличиваем качество
             backgroundColor: '#ffffff',
@@ -27,13 +24,11 @@ export const exportToPDF = async (elementId, filename, childName) => {
             windowHeight: element.scrollHeight
         });
 
-        // Восстанавливаем оригинальные стили
         element.style.overflow = originalOverflow;
         element.style.height = originalHeight;
 
         const imgData = canvas.toDataURL('image/png');
         
-        // Создаем PDF с учетом ориентации
         const imgWidth = 210; // A4 ширина в мм
         const pageHeight = 297; // A4 высота в мм
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -50,10 +45,8 @@ export const exportToPDF = async (elementId, filename, childName) => {
         pdf.setTextColor(100, 100, 100);
         pdf.text(`Дата генерации: ${new Date().toLocaleDateString('ru-RU')}`, 14, 30);
         
-        // Добавляем изображение
         pdf.addImage(imgData, 'PNG', 0, 40, imgWidth, imgHeight, undefined, 'FAST');
         
-        // Если контент не помещается на одну страницу, добавляем следующие
         let heightLeft = imgHeight - (pageHeight - 40);
         let currentPage = 1;
         
@@ -64,13 +57,11 @@ export const exportToPDF = async (elementId, filename, childName) => {
             heightLeft -= pageHeight;
             currentPage++;
             
-            // Добавляем номер страницы
             pdf.setFontSize(8);
             pdf.setTextColor(150, 150, 150);
             pdf.text(`Страница ${currentPage}`, 105, 290, { align: 'center' });
         }
         
-        // Сохраняем PDF
         pdf.save(`${filename}.pdf`);
         
         return true;

@@ -46,7 +46,6 @@ function WeightAnalytics({ measurements, child, calculateAgeWithPrecision, forma
     const calculateWeightMetrics = () => {
         const sorted = [...measurements].sort((a, b) => new Date(a.date) - new Date(b.date));
         
-        // Данные для графика веса с BMI
         const data = sorted.map(meas => {
             const ageMonths = calculateAgeWithPrecision(meas.date, child?.birth_date);
             const bmiValue = calculateBMI(meas.weight, meas.height);
@@ -60,7 +59,6 @@ function WeightAnalytics({ measurements, child, calculateAgeWithPrecision, forma
         });
         setWeightData(data);
 
-        // Расчет недельного набора массы
         if (sorted.length >= 2) {
             const last = sorted[sorted.length - 1];
             const prev = sorted[sorted.length - 2];
@@ -76,7 +74,6 @@ function WeightAnalytics({ measurements, child, calculateAgeWithPrecision, forma
                 setWeeklyGain(weekly);
             }
 
-            // Текущий BMI
             const currentBMI = calculateBMI(last.weight, last.height);
             setBmi(currentBMI);
             
@@ -103,7 +100,6 @@ function WeightAnalytics({ measurements, child, calculateAgeWithPrecision, forma
 
     const getGainStatus = (gain) => {
         if (!gain) return null;
-        // Примерные нормы недельного набора (упрощенно)
         if (gain < 0.5) return { color: '#e74c3c', text: 'Недостаточный' };
         if (gain > 1.5) return { color: '#e74c3c', text: 'Избыточный' };
         return { color: '#27ae60', text: 'Нормальный' };

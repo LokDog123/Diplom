@@ -153,7 +153,6 @@ function ParentProfile() {
                 <form onSubmit={handleSubmit}>
                     <div style={{ display: 'grid', gap: '20px' }}>
 
-                        {/* Имя */}
                         <div>
                             <label style={{ color: 'var(--text-secondary)' }}>
                                 <User size={16} /> Имя
@@ -168,7 +167,6 @@ function ParentProfile() {
                             />
                         </div>
 
-                        {/* Фамилия */}
                         <div>
                             <label style={{ color: 'var(--text-secondary)' }}>
                                 <User size={16} /> Фамилия
@@ -183,7 +181,6 @@ function ParentProfile() {
                             />
                         </div>
 
-                        {/* Email */}
                         <div>
                             <label style={{ color: 'var(--text-secondary)' }}>
                                 <Mail size={16} /> Email
@@ -198,7 +195,6 @@ function ParentProfile() {
                             />
                         </div>
 
-                        {/* Телефон */}
                         <div>
                             <label style={{ color: 'var(--text-secondary)' }}>
                                 <Phone size={16} /> Телефон
@@ -213,7 +209,6 @@ function ParentProfile() {
                             />
                         </div>
 
-                        {/* Дата */}
                         <div>
                             <label style={{ color: 'var(--text-secondary)' }}>
                                 <Calendar size={16} /> Дата рождения

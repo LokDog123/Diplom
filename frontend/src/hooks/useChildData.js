@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
-// Единый хук для загрузки всех данных о ребенке
 export const useChildData = (childId) => {
     // Загрузка данных ребенка
     const childQuery = useQuery({
@@ -70,7 +69,6 @@ export const useChildData = (childId) => {
     };
 };
 
-// Хук для загрузки списка детей
 export const useChildrenList = (parentId) => {
     return useQuery({
         queryKey: ['children', parentId],

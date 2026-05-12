@@ -1,7 +1,6 @@
 const FoodProduct = require('../models/FoodProduct');
 
 const foodProductController = {
-    // Создать продукт
     async create(req, res) {
         try {
             console.log('📝 Получены данные для создания продукта:', req.body);
@@ -46,7 +45,6 @@ const foodProductController = {
         }
     },
 
-    // Получить все продукты
     async getAll(req, res) {
         try {
             const products = await FoodProduct.findAll();
@@ -66,7 +64,6 @@ const foodProductController = {
         }
     },
 
-    // Получить продукт по ID
     async getById(req, res) {
         try {
             const { product_id } = req.params;
@@ -91,7 +88,6 @@ const foodProductController = {
         }
     },
 
-    // Получить продукты по категории
     async getByCategory(req, res) {
         try {
             const { category } = req.params;
@@ -113,7 +109,6 @@ const foodProductController = {
         }
     },
 
-    // Обновить продукт
     async update(req, res) {
         try {
             const { product_id } = req.params;
@@ -147,7 +142,6 @@ const foodProductController = {
         }
     },
 
-    // Удалить продукт
     async delete(req, res) {
         try {
             const { product_id } = req.params;
@@ -177,7 +171,6 @@ const foodProductController = {
         }
     },
 
-    // Получить категории
     async getCategories(req, res) {
         try {
             const categories = await FoodProduct.getCategories();
@@ -196,7 +189,6 @@ const foodProductController = {
         }
     },
 
-    // Получить аллергены
     async getAllergens(req, res) {
         try {
             const allergens = await FoodProduct.getAllergens();
@@ -216,7 +208,6 @@ const foodProductController = {
         }
     },
 
-    // Получить продукты по возрасту
     async getByAge(req, res) {
         try {
             const { months } = req.params;
@@ -238,7 +229,6 @@ const foodProductController = {
         }
     },
 
-    // Инициализация тестовых продуктов
     async initDefaultProducts(req, res) {
         try {
             console.log('📝 Инициализация тестовых продуктов...');

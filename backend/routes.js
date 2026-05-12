@@ -5,7 +5,6 @@ const router = express.Router();
 const url = 'mongodb://localhost:27017';
 const dbName = 'Diploma';
 
-// Получить детей родителя
 router.get('/parents/:parent_id/children', async (req, res) => {
     try {
         const { parent_id } = req.params;
@@ -27,7 +26,6 @@ router.get('/parents/:parent_id/children', async (req, res) => {
     }
 });
 
-// Добавить ребенка
 router.post('/children', async (req, res) => {
     try {
         const { parent_id, name, birth_date, gender } = req.body;

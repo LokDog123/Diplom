@@ -79,7 +79,6 @@ function getAgeValueInMonths(age_value, age_unit) {
 }
 
 const vaccinationController = {
-    // Получить полный календарь прививок
     async getSchedule(req, res) {
         try {
             const { child_id } = req.params;
@@ -95,7 +94,6 @@ const vaccinationController = {
             const ageMonths = calculateAgeInMonths(child.birth_date);
             const ageYears = calculateAgeInYears(child.birth_date);
             
-            // Все прививки из календаря
             const fullSchedule = vaccineSchedule.map(vaccine => {
                 const existing = existingVaccinations.find(
                     v => v.vaccine_name === vaccine.name && v.dose_number === vaccine.dose
@@ -125,7 +123,6 @@ const vaccinationController = {
                 };
             });
             
-            // Статистика
             const stats = {
                 total: fullSchedule.length,
                 completed: fullSchedule.filter(v => v.status === 'completed').length,
@@ -150,7 +147,6 @@ const vaccinationController = {
         }
     },
 
-    // Получить только предстоящие прививки
     async getUpcoming(req, res) {
         try {
             const { child_id } = req.params;
@@ -164,7 +160,6 @@ const vaccinationController = {
         }
     },
 
-    // Получить просроченные прививки
     async getOverdue(req, res) {
         try {
             const { child_id } = req.params;
@@ -176,7 +171,6 @@ const vaccinationController = {
         }
     },
 
-    // Получить все прививки ребенка
     async getByChild(req, res) {
         try {
             const { child_id } = req.params;
@@ -188,7 +182,6 @@ const vaccinationController = {
         }
     },
 
-    // Получить статистику по прививкам
     async getStats(req, res) {
         try {
             const { child_id } = req.params;
@@ -221,7 +214,6 @@ const vaccinationController = {
         }
     },
 
-    // Создать запись о прививке
     async create(req, res) {
         try {
             console.log('📝 Создание прививки с данными:', req.body);
@@ -254,7 +246,6 @@ const vaccinationController = {
         }
     },
 
-    // Обновить прививку
     async update(req, res) {
         try {
             const { vaccination_id } = req.params;
@@ -273,7 +264,6 @@ const vaccinationController = {
         }
     },
 
-    // Отметить прививку как выполненную
     async markAsCompleted(req, res) {
         try {
             const { vaccination_id } = req.params;
@@ -299,7 +289,6 @@ const vaccinationController = {
         }
     },
 
-    // Удалить прививку
     async delete(req, res) {
         try {
             const { vaccination_id } = req.params;
