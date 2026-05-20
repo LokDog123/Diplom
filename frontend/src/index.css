@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+/* Темная тема */
+.dark-mode {
+    background: #1a1a2e;
+    color: #eee;
+}
+
+.dark-mode .stat-card,
+.dark-mode .chart-container,
+.dark-mode .history-container,
+.dark-mode .feeding-container,
+.dark-mode .health-container {
+    background: #16213e;
+    border-color: #0f3460;
+}
+
+.dark-mode .stat-value,
+.dark-mode .chart-title,
+.dark-mode .history-title {
+    color: #eee;
+}
+
+.dark-mode .stat-label {
+    color: #aaa;
+}
+
+.dark-mode .measurements-table td {
+    color: #ddd;
+}
+
+.dark-mode .measurements-table tr:nth-child(even) {
+    background: #1a1a2e;
+}
+
+.dark-mode .back-link {
+    background: #0f3460;
+    color: #ddd;
+}
+
+.dark-mode .back-link:hover {
+    background: #1a5276;
+}
+
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+    background: #0f3460;
+    border-color: #1a5276;
+    color: #eee;
+}
+
+.dark-mode .add-feeding-form,
+.dark-mode .add-health-form {
+    background: #16213e;
+}
+
+.dark-mode .feeding-item,
+.dark-mode .health-item {
+    background: #16213e;
+    border-color: #0f3460;
+}

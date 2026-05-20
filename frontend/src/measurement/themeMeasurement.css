@@ -1,0 +1,146 @@
+/* ============================= */
+/* КАРТОЧКА */
+/* ============================= */
+.header {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 30px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  border: 1px solid #e5eaf0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* ============================= */
+/* ВЕРХ: КНОПКА НАЗАД */
+/* ============================= */
+.back-link {
+  width: fit-content;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+  border-radius: 12px;
+
+  background: #f1f5f9;
+  color: #475569;
+
+  text-decoration: none;
+  font-weight: 500;
+
+  transition: 0.2s;
+}
+
+.back-link:hover {
+  background: #e2e8f0;
+}
+
+/* ============================= */
+/* АВАТАР (ПО ЦЕНТРУ) */
+/* ============================= */
+.child-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto;
+
+  background: linear-gradient(135deg, #4da3ff, #2b7be4);
+}
+
+/* ============================= */
+/* БЛОК С ИМЕНЕМ */
+/* ============================= */
+.child-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.child-name {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.child-details {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.child-details span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ============================= */
+/* КНОПКИ */
+/* ============================= */
+.header > div:last-child {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ОБЩАЯ КНОПКА */
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.action-button.edit {
+  background: #f59e0b;
+  color: white;
+}
+
+.action-button.delete {
+  background: #ef4444;
+  color: white;
+}
+
+.add-measurement-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 20px;
+  border-radius: 12px;
+
+  background: #3b82f6;
+  color: white;
+
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* ХОВЕРЫ */
+.action-button:hover,
+.add-measurement-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}

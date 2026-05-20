@@ -1,0 +1,115 @@
+* {
+    outline: none !important;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--primary) !important;
+    outline-offset: 2px;
+}
+:root {
+    --bg-primary: #f5f7fa;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f0f4f8;
+    --bg-card: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --text-muted: #95a5a6;
+    --border: #e0e6ed;
+    --border-light: #ecf0f1;
+    --header-bg: #ffffff96;
+    --shadow: 0 5px 15px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+    --input-bg: #ffffff;
+    --hover-bg: #f0f4f8;
+    --primary: #3498db;
+    --primary-hover: #2980b9;
+    --danger: #e74c3c;
+    --danger-hover: #c0392b;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --male: #3498db;
+    --female: #e84393;
+}
+
+/* Применяем переменные ко всем элементам */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Автоматическое применение ко всем компонентам */
+.card, .stat-card, .chart-container, .history-container,
+.feeding-container, .health-container, .modal-content,
+.dashboard-container > div > div, [class*="container"] {
+    background: var(--bg-card);
+    border-color: var(--border);
+    box-shadow: var(--shadow);
+}
+
+input, select, textarea {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+button, .btn, .back-link {
+    transition: all 0.3s ease;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border);
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    border-bottom: 1px solid var(--border);
+    padding: 12px;
+    color: var(--text-primary);
+}
+
+tr:hover td {
+    background: var(--hover-bg);
+}
+
+/* Стили для ссылок */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+/* Стили для заголовков */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+/* Стили для параграфов и текста */
+p, span, div {
+    color: inherit;
+}
+
+/* Убираем мигание при загрузке */
+* {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
