@@ -13,5 +13,5 @@
       "@assets/*": ["assets/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../backend/data"]
 }

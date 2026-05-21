@@ -12,6 +12,7 @@ function VaccinationCalendar({ child_id }) {
     const [editingId, setEditingId] = useState(null);
     const [activeTab, setActiveTab] = useState('history');
     const [error, setError] = useState('');
+    const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null, name: '' }); // Состояние для кастомного диалога удаления
     const [formData, setFormData] = useState({
         vaccine_name: '',
         administered_date: '',
@@ -80,7 +81,6 @@ function VaccinationCalendar({ child_id }) {
             
             resetForm();
             fetchAllData();
-            alert('Прививка добавлена!');
         } catch (error) {
             setError(error.response?.data?.message || error.message);
         } finally {
@@ -114,7 +114,6 @@ function VaccinationCalendar({ child_id }) {
             
             resetForm();
             fetchAllData();
-            alert('Прививка обновлена!');
         } catch (error) {
             setError(error.response?.data?.message || error.message);
         } finally {
@@ -122,15 +121,21 @@ function VaccinationCalendar({ child_id }) {
         }
     };
 
-    const handleDeleteVaccine = async (id, name) => {
-        if (window.confirm(`Удалить прививку "${name}"?`)) {
-            try {
-                await axios.delete(`http://localhost:5000/api/vaccinations/${id}`);
-                fetchAllData();
-                alert('Прививка удалена!');
-            } catch (error) {
-                setError(error.response?.data?.message || error.message);
-            }
+    // Функция, которая показывает кастомное окно подтверждения
+    const confirmDelete = (id, name) => {
+        setDeleteConfirm({ show: true, id, name });
+    };
+
+    // Функция, которая выполняет удаление
+    const handleDeleteVaccine = async () => {
+        const { id, name } = deleteConfirm;
+        try {
+            await axios.delete(`http://localhost:5000/api/vaccinations/${id}`);
+            fetchAllData();
+            setDeleteConfirm({ show: false, id: null, name: '' }); // Закрываем окно
+        } catch (error) {
+            setError(error.response?.data?.message || error.message);
+            setDeleteConfirm({ show: false, id: null, name: '' }); // Закрываем окно даже при ошибке
         }
     };
 
@@ -228,7 +233,7 @@ function VaccinationCalendar({ child_id }) {
                 </div>
             )}
 
-            {/* Форма добавления/редактирования - ИСПРАВЛЕННАЯ ВЕРСИЯ */}
+            {/* Форма добавления/редактирования */}
             {showAddForm && (
                 <div style={{ 
                     background: '#f9f9f9', 
@@ -242,7 +247,6 @@ function VaccinationCalendar({ child_id }) {
                     </h3>
                     
                     <form onSubmit={editingId ? handleUpdateVaccine : handleAddVaccine}>
-                        {/* Название прививки - полная ширина */}
                         <div style={{ marginBottom: '20px' }}>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
                                 Название прививки <span style={{ color: '#e74c3c' }}>*</span>
@@ -264,7 +268,6 @@ function VaccinationCalendar({ child_id }) {
                             />
                         </div>
 
-                        {/* Дата и доза - 2 колонки */}
                         <div style={{ 
                             display: 'grid', 
                             gridTemplateColumns: '1fr 1fr', 
@@ -311,7 +314,6 @@ function VaccinationCalendar({ child_id }) {
                             </div>
                         </div>
 
-                        {/* Серия и место - 2 колонки */}
                         <div style={{ 
                             display: 'grid', 
                             gridTemplateColumns: '1fr 1fr', 
@@ -358,7 +360,6 @@ function VaccinationCalendar({ child_id }) {
                             </div>
                         </div>
 
-                        {/* Реакция */}
                         <div style={{ marginBottom: '20px' }}>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
                                 Реакция на прививку
@@ -382,7 +383,6 @@ function VaccinationCalendar({ child_id }) {
                             </select>
                         </div>
 
-                        {/* Заметки */}
                         <div style={{ marginBottom: '25px' }}>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '14px' }}>
                                 Заметки
@@ -405,7 +405,6 @@ function VaccinationCalendar({ child_id }) {
                             />
                         </div>
 
-                        {/* Кнопки */}
                         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e0e0e0', paddingTop: '20px' }}>
                             <button 
                                 type="button" 
@@ -478,7 +477,8 @@ function VaccinationCalendar({ child_id }) {
                                                 <button onClick={() => handleEdit(vac)} style={{ background: '#f39c12', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', marginRight: '8px', cursor: 'pointer' }}>
                                                     <Edit size={14} style={{ display: 'inline', marginRight: '4px' }} /> Ред.
                                                 </button>
-                                                <button onClick={() => handleDeleteVaccine(vac.vaccination_id, vac.vaccine_name)} style={{ background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}>
+                                                {/* Измененная кнопка удаления - вызывает confirmDelete вместо прямого вызова */}
+                                                <button onClick={() => confirmDelete(vac.vaccination_id, vac.vaccine_name)} style={{ background: '#e74c3c', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}>
                                                     <Trash2 size={14} style={{ display: 'inline', marginRight: '4px' }} /> Уд.
                                                 </button>
                                             </td>
@@ -531,6 +531,68 @@ function VaccinationCalendar({ child_id }) {
                             <p>Календарь прививок пуст</p>
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Кастомное модальное окно для подтверждения удаления */}
+            {deleteConfirm.show && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        width: '90%',
+                        maxWidth: '400px',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+                    }}>
+                        <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '20px' }}>
+                            Подтвердите действие
+                        </h3>
+                        <p style={{ marginBottom: '24px', fontSize: '16px', color: '#333' }}>
+                            Удалить прививку <strong>"{deleteConfirm.name}"</strong>?
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                            <button
+                                onClick={() => setDeleteConfirm({ show: false, id: null, name: '' })}
+                                style={{
+                                    padding: '8px 20px',
+                                    background: '#95a5a6',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                Отмена
+                            </button>
+                            <button
+                                onClick={handleDeleteVaccine}
+                                style={{
+                                    padding: '8px 20px',
+                                    background: '#e74c3c',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
