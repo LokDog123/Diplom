@@ -19,7 +19,7 @@ class Feeding {
             } = data;
             
             // Генерируем уникальный ID
-            const feeding_id = 'feed_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const feeding_id = 'feed_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
             
             // Базовый объект с обязательными полями
             const feeding = {

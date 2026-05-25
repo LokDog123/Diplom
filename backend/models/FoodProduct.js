@@ -70,6 +70,17 @@ class FoodProduct {
         }
     }
 
+    static async findByName(name) {
+        try {
+            console.log('🔍 Поиск продукта по имени:', name);
+            const product = await this.collection().findOne({ name: name });
+            return product;
+        } catch (error) {
+            console.error('❌ Ошибка в FoodProduct.findByName:', error);
+            throw error;
+        }
+    }
+
     static async findByCategory(category) {
         try {
             return await this.collection()
@@ -123,6 +134,7 @@ class FoodProduct {
             throw error;
         }
     }
+
     static async deleteByChild(child_id) {
         try {
             // ВАЖНО: продукты НЕ привязаны к конкретному ребенку!
