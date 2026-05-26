@@ -233,7 +233,6 @@ function VaccinationCalendar({ child_id }) {
                 </div>
             )}
 
-            {/* Форма добавления/редактирования */}
             {showAddForm && (
                 <div style={{ 
                     background: '#f9f9f9', 

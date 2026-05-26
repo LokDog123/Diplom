@@ -1,8 +1,34 @@
 const { getDB } = require('../config/db');
 
+// Константы для типов питания
+const FeedingTypes = {
+    BREAST: 'breast',
+    FORMULA: 'formula',
+    PUREE: 'puree',
+    CEREAL: 'cereal',
+    MEAT: 'meat',
+    FRUIT: 'fruit',
+    VEGETABLE: 'vegetable',
+    OTHER: 'other'
+};
+
+// Константы для реакций на еду
+const FoodReactions = {
+    NORMAL: 'normal',
+    ALLERGY: 'allergy',
+    RASH: 'rash',
+    DIARRHEA: 'diarrhea',
+    CONSTIPATION: 'constipation',
+    VOMITING: 'vomiting'
+};
+
 class Measurement {
     static collection() {
         return getDB().collection('measurements');
+    }
+
+    static getTypes() {
+        return { FeedingTypes, FoodReactions };
     }
 
     static async create(measurementData) {
@@ -25,6 +51,16 @@ class Measurement {
             symptoms
         } = measurementData;
         
+        // Валидация типа питания
+        if (feeding_type && !Object.values(FeedingTypes).includes(feeding_type)) {
+            throw new Error(`Некорректный тип питания. Допустимые типы: ${Object.values(FeedingTypes).join(', ')}`);
+        }
+        
+        // Валидация реакции на еду
+        if (food_reaction && !Object.values(FoodReactions).includes(food_reaction)) {
+            throw new Error(`Некорректная реакция на еду. Допустимые реакции: ${Object.values(FoodReactions).join(', ')}`);
+        }
+        
         const measurement_id = 'meas_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         
         const measurement = {
@@ -36,16 +72,16 @@ class Measurement {
             head_circumference: head_circumference ? parseFloat(head_circumference) : null,
             
             // Поля для питания
-            feeding_type: feeding_type || null, // 'breast', 'formula', 'puree', 'cereal', 'meat', 'fruit', 'vegetable', 'other'
-            food_introduced: food_introduced || null, // название продукта
-            food_reaction: food_reaction || null, // 'normal', 'allergy', 'rash', 'diarrhea', 'constipation', 'vomiting'
+            feeding_type: feeding_type || null,
+            food_introduced: food_introduced || null,
+            food_reaction: food_reaction || null,
             
             // Поля для здоровья
-            toilet_count: toilet_count ? parseInt(toilet_count) : null, // количество походов в туалет
-            spitup_count: spitup_count ? parseInt(spitup_count) : null, // количество срыгиваний
-            temperature: temperature ? parseFloat(temperature) : null, // температура тела
-            medication: medication || null, // принятые лекарства
-            symptoms: symptoms || null, // симптомы
+            toilet_count: toilet_count ? parseInt(toilet_count) : null,
+            spitup_count: spitup_count ? parseInt(spitup_count) : null,
+            temperature: temperature ? parseFloat(temperature) : null,
+            medication: medication || null,
+            symptoms: symptoms || null,
             
             notes: notes || '',
             created_at: new Date(),
@@ -69,6 +105,15 @@ class Measurement {
 
     static async update(measurement_id, updateData) {
         const updateFields = { ...updateData, updated_at: new Date() };
+        
+        // Валидация типов при обновлении
+        if (updateFields.feeding_type && !Object.values(FeedingTypes).includes(updateFields.feeding_type)) {
+            throw new Error(`Некорректный тип питания. Допустимые типы: ${Object.values(FeedingTypes).join(', ')}`);
+        }
+        
+        if (updateFields.food_reaction && !Object.values(FoodReactions).includes(updateFields.food_reaction)) {
+            throw new Error(`Некорректная реакция на еду. Допустимые реакции: ${Object.values(FoodReactions).join(', ')}`);
+        }
         
         // Преобразование числовых полей
         if (updateFields.height) updateFields.height = parseFloat(updateFields.height);

@@ -31,6 +31,13 @@ function getDB() {
     return db;
 }
 
+function getClient() {
+    if (!client) {
+        throw new Error('Клиент MongoDB не инициализирован. Сначала вызовите connectDB()');
+    }
+    return client;
+}
+
 async function closeDB() {
     if (client) {
         await client.close();
@@ -38,4 +45,17 @@ async function closeDB() {
     }
 }
 
-module.exports = { connectDB, getDB, closeDB };
+// Автоматическое закрытие при завершении процесса
+process.on('SIGINT', async () => {
+    console.log('\n⚠️ Получен сигнал SIGINT. Закрываем соединение...');
+    await closeDB();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    console.log('\n⚠️ Получен сигнал SIGTERM. Закрываем соединение...');
+    await closeDB();
+    process.exit(0);
+});
+
+module.exports = { connectDB, getDB, getClient, closeDB };

@@ -1,8 +1,29 @@
 const { getDB } = require('../config/db');
 
+// Константы для типов записей о здоровье
+const HealthTypes = {
+    TEMPERATURE: 'temperature',
+    TOILET: 'toilet',
+    SPITUP: 'spitup',
+    MEDICATION: 'medication',
+    SYMPTOMS: 'symptoms'
+};
+
+// Константы для типов туалета
+const ToiletTypes = {
+    PEE: 'pee',
+    POOP_NORMAL: 'poop_normal',
+    POOP_DIARRHEA: 'poop_diarrhea',
+    POOP_CONSTIPATION: 'poop_constipation'
+};
+
 class Health {
     static collection() {
         return getDB().collection('health');
+    }
+
+    static getTypes() {
+        return { ...HealthTypes, ToiletTypes };
     }
 
     static async create(data) {
@@ -17,6 +38,11 @@ class Health {
                 notes
             } = data;
             
+            // Валидация типа
+            if (!Object.values(HealthTypes).includes(type)) {
+                throw new Error(`Некорректный тип записи. Допустимые типы: ${Object.values(HealthTypes).join(', ')}`);
+            }
+            
             const health_id = 'health_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
             const health = {
@@ -30,10 +56,16 @@ class Health {
             
             // Добавляем опциональные поля только если они есть
             if (value !== undefined && value !== null && value !== '') {
-                if (type === 'temperature') {
+                if (type === HealthTypes.TEMPERATURE) {
                     health.value = parseFloat(value);
-                } else if (type === 'spitup') {
+                } else if (type === HealthTypes.SPITUP) {
                     health.value = parseInt(value);
+                } else if (type === HealthTypes.TOILET) {
+                    // Валидация значения для туалета
+                    if (!Object.values(ToiletTypes).includes(value)) {
+                        throw new Error(`Некорректное значение туалета. Допустимые значения: ${Object.values(ToiletTypes).join(', ')}`);
+                    }
+                    health.value = value;
                 } else {
                     health.value = value;
                 }
@@ -115,6 +147,11 @@ class Health {
             
             const { date, type, value, notes } = updateData;
             
+            // Валидация типа
+            if (type && !Object.values(HealthTypes).includes(type)) {
+                throw new Error(`Некорректный тип записи. Допустимые типы: ${Object.values(HealthTypes).join(', ')}`);
+            }
+            
             const updateFields = {
                 date: new Date(date),
                 type,
@@ -123,10 +160,16 @@ class Health {
             
             // Добавляем value только если оно есть
             if (value !== undefined && value !== null && value !== '') {
-                if (type === 'temperature') {
+                if (type === HealthTypes.TEMPERATURE) {
                     updateFields.value = parseFloat(value);
-                } else if (type === 'spitup') {
+                } else if (type === HealthTypes.SPITUP) {
                     updateFields.value = parseInt(value);
+                } else if (type === HealthTypes.TOILET) {
+                    // Валидация значения для туалета
+                    if (!Object.values(ToiletTypes).includes(value)) {
+                        throw new Error(`Некорректное значение туалета. Допустимые значения: ${Object.values(ToiletTypes).join(', ')}`);
+                    }
+                    updateFields.value = value;
                 } else {
                     updateFields.value = value;
                 }
@@ -190,7 +233,7 @@ class Health {
                 .find({ 
                     child_id,
                     date: { $gte: start },
-                    type: 'temperature',
+                    type: HealthTypes.TEMPERATURE,
                     value: { $ne: null }
                 })
                 .sort({ date: 1 })
@@ -216,23 +259,23 @@ class Health {
                         $match: { 
                             child_id,
                             date: { $gte: start },
-                            type: 'toilet'
+                            type: HealthTypes.TOILET
                         }
                     },
                     {
                         $group: {
                             _id: null,
                             total_pee: {
-                                $sum: { $cond: [{ $eq: ['$value', 'pee'] }, 1, 0] }
+                                $sum: { $cond: [{ $eq: ['$value', ToiletTypes.PEE] }, 1, 0] }
                             },
                             total_poop_normal: {
-                                $sum: { $cond: [{ $eq: ['$value', 'poop_normal'] }, 1, 0] }
+                                $sum: { $cond: [{ $eq: ['$value', ToiletTypes.POOP_NORMAL] }, 1, 0] }
                             },
                             total_poop_diarrhea: {
-                                $sum: { $cond: [{ $eq: ['$value', 'poop_diarrhea'] }, 1, 0] }
+                                $sum: { $cond: [{ $eq: ['$value', ToiletTypes.POOP_DIARRHEA] }, 1, 0] }
                             },
                             total_poop_constipation: {
-                                $sum: { $cond: [{ $eq: ['$value', 'poop_constipation'] }, 1, 0] }
+                                $sum: { $cond: [{ $eq: ['$value', ToiletTypes.POOP_CONSTIPATION] }, 1, 0] }
                             }
                         }
                     }
@@ -262,7 +305,7 @@ class Health {
                         $match: { 
                             child_id,
                             date: { $gte: start },
-                            type: 'spitup',
+                            type: HealthTypes.SPITUP,
                             value: { $ne: null }
                         }
                     },
