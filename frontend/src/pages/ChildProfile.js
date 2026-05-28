@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ChildHeader from '../measurement/ChildHeader';
@@ -9,9 +9,7 @@ import FeedingTracker from '../measurement/FeedingTracker';
 import HealthTracker from '../measurement/HealthTracker';
 import WeightAnalytics from '../measurement/WeightAnalytics';
 import DeleteConfirmModal from '../measurement/DeleteConfirmModal';
-import VaccinationCalendar from '../components/VaccinationCalendar'; // ДОБАВЛЕНО
-import { Download } from 'lucide-react';
-import { exportToPDF } from '../utils/pdfExport';
+import VaccinationCalendar from '../components/VaccinationCalendar';
 import './ChildProfile.css';
 
 function ChildProfile() {
@@ -31,7 +29,6 @@ function ChildProfile() {
         gender: 'male'
     });
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const reportRef = useRef(null);
 
     const calculateAgeWithPrecision = useCallback((measureDate, birthDate) => {
         if (!birthDate) return 0;
@@ -119,27 +116,14 @@ function ChildProfile() {
         }
     };
 
-    const handleExportPDF = async () => {
-        if (!reportRef.current) return;
-        
-        const exportButton = document.querySelector('.export-button');
-        const originalText = exportButton?.innerHTML;
-        if (exportButton) {
-            exportButton.innerHTML = '⏳ Подготовка...';
-            exportButton.disabled = true;
-        }
+    // Обработчик удаления замера
+    const handleMeasurementDeleted = () => {
+        fetchChildData();
+    };
 
-        try {
-            await exportToPDF('report-content', `report_${child.name}_${Date.now()}`, child.name);
-        } catch (error) {
-            console.error('Ошибка экспорта:', error);
-            alert('Произошла ошибка при создании PDF. Попробуйте еще раз.');
-        } finally {
-            if (exportButton) {
-                exportButton.innerHTML = originalText;
-                exportButton.disabled = false;
-            }
-        }
+    // Обработчик обновления замера
+    const handleMeasurementUpdated = () => {
+        fetchChildData();
     };
 
     const formatDate = (dateString) => {
@@ -168,171 +152,109 @@ function ChildProfile() {
                 onCancel={() => setShowDeleteConfirm(false)}
             />
 
-            <div id="report-content" ref={reportRef}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: '20px',
-                    marginBottom: '30px',
-                    flexWrap: 'wrap'
-                }}>
-                    <div style={{ flex: 1 }}>
-                        <ChildHeader
-                            child={child}
-                            child_id={child_id}
-                            isEditing={isEditing}
-                            editForm={editForm}
-                            setEditForm={setEditForm}
-                            setIsEditing={setIsEditing}
-                            setShowDeleteConfirm={setShowDeleteConfirm}
-                            handleEditSubmit={handleEditSubmit}
-                            formatDate={formatDate}
-                        />
-                    </div>
+            <ChildHeader
+                child={child}
+                child_id={child_id}
+                isEditing={isEditing}
+                editForm={editForm}
+                setEditForm={setEditForm}
+                setIsEditing={setIsEditing}
+                setShowDeleteConfirm={setShowDeleteConfirm}
+                handleEditSubmit={handleEditSubmit}
+                formatDate={formatDate}
+            />
+
+            <div className="tabs-container">
+                <button
+                    className={`tab-button ${activeTab === 'measurements' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('measurements')}
+                >
+                    Замеры
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'weight' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('weight')}
+                >
+                    Анализ веса
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'feeding' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('feeding')}
+                >
+                    Питание
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'health' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('health')}
+                >
+                    Здоровье
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'vaccinations' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('vaccinations')}
+                >
+                    Прививки
+                </button>
+            </div>
+
+            {activeTab === 'measurements' && (
+                <>
+                    <ChildStats measurements={measurements} />
                     
-                    <div style={{
-                        display: 'flex',
-                        gap: '12px',
-                        alignItems: 'center',
-                        flexWrap: 'wrap'
-                    }}>
-                        <button 
-                            onClick={() => navigate(`/child/${child_id}/add-measurement`)}
-                            style={{
-                                padding: '10px 20px',
-                                background: '#3498db',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '12px',
-                                cursor: 'pointer',
-                                fontWeight: '500',
-                                fontSize: '14px',
-                                transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = '#2980b9'}
-                            onMouseLeave={(e) => e.currentTarget.style.background = '#3498db'}
-                        >
-                            + Добавить замер
-                        </button>
-                        
-                        <button 
-                            onClick={handleExportPDF}
-                            className="export-button"
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '10px 20px',
-                                background: '#27ae60',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '12px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = '#229954'}
-                            onMouseLeave={(e) => e.currentTarget.style.background = '#27ae60'}
-                        >
-                            <Download size={18} />
-                            Скачать отчет PDF
-                        </button>
-                    </div>
-                </div>
-
-                <div className="tabs-container">
-                    <button
-                        className={`tab-button ${activeTab === 'measurements' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('measurements')}
-                    >
-                        Замеры
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'weight' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('weight')}
-                    >
-                        Анализ веса
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'feeding' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('feeding')}
-                    >
-                        Питание
-                    </button>
-                    <button
-                        className={`tab-button ${activeTab === 'health' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('health')}
-                    >
-                        Здоровье
-                    </button>
-                    {/* ДОБАВЛЕНА ВКЛАДКА ПРИВИВОК */}
-                    <button
-                        className={`tab-button ${activeTab === 'vaccinations' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('vaccinations')}
-                    >
-                        Прививки
-                    </button>
-                </div>
-
-                {activeTab === 'measurements' && (
-                    <>
-                        <ChildStats measurements={measurements} />
-                        
-                        <ChildCharts
-                            measurements={measurements}
-                            child={child}
-                            activeChart={activeChart}
-                            setActiveChart={setActiveChart}
-                            calculateAgeWithPrecision={calculateAgeWithPrecision}
-                            formatDate={formatDate}
-                        />
-
-                        <MeasurementsHistory
-                            measurements={measurements}
-                            child={child}
-                            child_id={child_id}
-                            calculateAgeWithPrecision={calculateAgeWithPrecision}
-                            formatDate={formatDate}
-                        />
-                    </>
-                )}
-
-                {activeTab === 'weight' && (
-                    <WeightAnalytics
+                    <ChildCharts
                         measurements={measurements}
                         child={child}
+                        activeChart={activeChart}
+                        setActiveChart={setActiveChart}
                         calculateAgeWithPrecision={calculateAgeWithPrecision}
                         formatDate={formatDate}
                     />
-                )}
 
-                {activeTab === 'feeding' && (
-                    <FeedingTracker
+                    <MeasurementsHistory
+                        measurements={measurements}
+                        child={child}
                         child_id={child_id}
-                        feedingData={feedingData}
-                        setFeedingData={setFeedingData}
+                        calculateAgeWithPrecision={calculateAgeWithPrecision}
                         formatDate={formatDate}
+                        onMeasurementDeleted={handleMeasurementDeleted}
+                        onMeasurementUpdated={handleMeasurementUpdated}
                     />
-                )}
+                </>
+            )}
 
-                {activeTab === 'health' && (
-                    <HealthTracker
-                        child_id={child_id}
-                        healthData={healthData}
-                        setHealthData={setHealthData}
-                        formatDate={formatDate}
-                    />
-                )}
+            {activeTab === 'weight' && (
+                <WeightAnalytics
+                    measurements={measurements}
+                    child={child}
+                    calculateAgeWithPrecision={calculateAgeWithPrecision}
+                    formatDate={formatDate}
+                />
+            )}
 
-                {activeTab === 'vaccinations' && (
-                    <VaccinationCalendar 
-                        child_id={child_id} 
-                        formatDate={formatDate}
-                    />
-                )}
-            </div>
+            {activeTab === 'feeding' && (
+                <FeedingTracker
+                    child_id={child_id}
+                    feedingData={feedingData}
+                    setFeedingData={setFeedingData}
+                    formatDate={formatDate}
+                />
+            )}
+
+            {activeTab === 'health' && (
+                <HealthTracker
+                    child_id={child_id}
+                    healthData={healthData}
+                    setHealthData={setHealthData}
+                    formatDate={formatDate}
+                />
+            )}
+
+            {activeTab === 'vaccinations' && (
+                <VaccinationCalendar 
+                    child_id={child_id} 
+                    formatDate={formatDate}
+                />
+            )}
         </div>
     );
 }

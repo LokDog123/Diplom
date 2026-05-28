@@ -11,8 +11,8 @@ root.render(
     </React.StrictMode>
 );
 /*
-cd C:\Users\Miroslav\Desktop\Diploma\backend
+cd C:\Users\Miroslav\Desktop\Diplom-main\backend
 node server.js
-cd C:\Users\Miroslav\Desktop\Diploma\frontend
+cd C:\Users\Miroslav\Desktop\Diplom-main\frontend
 npm start
 */

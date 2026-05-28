@@ -1045,37 +1045,88 @@
     width: auto;
     margin: 0;
 }
-/* Стили для PDF экспорта */
-@media print {
-    .export-button,
-    .tab-button,
-    button:not(.no-print) {
-        display: none !important;
-    }
-    
-    #report-content {
-        padding: 20px;
-        background: white;
-    }
-    
-    .container {
-        margin: 0;
-        padding: 0;
-    }
+/* Кнопки действий */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
 }
 
-/* Анимация для кнопки экспорта */
-.export-button {
-    position: relative;
-    overflow: hidden;
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.export-button:active {
-    transform: scale(0.98);
+.edit-btn {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
 }
 
-/* Улучшенные стили для графиков при экспорте */
-canvas {
-    max-width: 100%;
-    height: auto;
+.edit-btn:hover {
+    background: #f39c12;
+    color: white;
+    transform: scale(1.05);
+}
+
+.delete-btn {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.delete-btn:hover {
+    background: #e74c3c;
+    color: white;
+    transform: scale(1.05);
+}
+
+.save-btn {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.save-btn:hover {
+    background: #27ae60;
+    color: white;
+}
+
+.cancel-btn {
+    background: rgba(149, 165, 166, 0.1);
+    color: #95a5a6;
+}
+
+.cancel-btn:hover {
+    background: #95a5a6;
+    color: white;
+}
+
+/* Поля ввода в режиме редактирования */
+.edit-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.editing-row {
+    background: #fef9e7 !important;
+}
+
+.editing-row td {
+    padding: 8px;
 }

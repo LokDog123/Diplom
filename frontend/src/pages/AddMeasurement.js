@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Save, Loader } from 'lucide-react';
+import { ArrowLeft, Save, Loader, Calendar, Ruler, Weight, Circle, FileText } from 'lucide-react';
 import axios from 'axios';
+import './AddMeasurement.css';
 
 function AddMeasurement() {
     const { child_id } = useParams();
@@ -61,115 +62,68 @@ function AddMeasurement() {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: '#f5f7fa',
-            padding: '40px 20px'
-        }}>
-            <div style={{
-                maxWidth: '800px',
-                margin: '0 auto'
-            }}>
-                <Link 
-                    to={`/child/${child_id}`} 
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        textDecoration: 'none',
-                        color: '#64748b',
-                        marginBottom: '15px'
-                    }}
-                >
+        <div className="add-measurement-page">
+            <div className="add-measurement-container">
+                <Link to={`/child/${child_id}`} className="back-link">
                     <ArrowLeft size={20} />
                     Назад
                 </Link>
                 
-                <h1 style={{
-                    fontSize: '28px',
-                    color: '#1e293b',
-                    marginBottom: '20px'
-                }}>Добавить замер</h1>
+                <h1 className="page-title">Добавить замер</h1>
 
                 {error && (
-                    <div style={{
-                        background: '#fee2e2',
-                        color: '#ef4444',
-                        border: '1px solid #ef4444',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        marginBottom: '20px'
-                    }}>
+                    <div className="error-message">
                         ❌ {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} style={{
-                    background: '#ffffff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '20px',
-                    padding: '30px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.08)'
-                }}>
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569' }}>
-                            Дата <span style={{ color: '#ef4444' }}>*</span>
+                <form onSubmit={handleSubmit} className="measurement-form">
+                    {/* Поле Дата */}
+                    <div className="form-group">
+                        <label className="form-label">
+                            <Calendar size={18} />
+                            Дата <span className="required">*</span>
                         </label>
                         <input
                             type="date"
                             name="date"
                             value={formData.date}
                             onChange={handleChange}
-                            style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                borderRadius: '12px',
-                                border: '2px solid #e2e8f0',
-                                fontSize: '16px'
-                            }}
+                            className="form-input"
                             required
                         />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#475569' }}>
-                                Рост (см) <span style={{ color: '#ef4444' }}>*</span>
+                    {/* Рост и Вес в одну строку */}
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">
+                                <Ruler size={18} />
+                                Рост (см) <span className="required">*</span>
                             </label>
                             <input
                                 type="number"
                                 name="height"
                                 value={formData.height}
                                 onChange={handleChange}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px 16px',
-                                    borderRadius: '12px',
-                                    border: '2px solid #e2e8f0',
-                                    fontSize: '16px'
-                                }}
+                                className="form-input"
                                 step="0.1"
                                 placeholder="75.5"
                                 required
                             />
                         </div>
                         
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: '#475569' }}>
-                                Вес (кг) <span style={{ color: '#ef4444' }}>*</span>
+                        <div className="form-group">
+                            <label className="form-label">
+                                <Weight size={18} />
+                                Вес (кг) <span className="required">*</span>
                             </label>
                             <input
                                 type="number"
                                 name="weight"
                                 value={formData.weight}
                                 onChange={handleChange}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px 16px',
-                                    borderRadius: '12px',
-                                    border: '2px solid #e2e8f0',
-                                    fontSize: '16px'
-                                }}
+                                className="form-input"
                                 step="0.01"
                                 placeholder="9.2"
                                 required
@@ -177,65 +131,44 @@ function AddMeasurement() {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569' }}>
-                            Окружность головы (см)
+                    {/* Окружность головы */}
+                    <div className="form-group">
+                        <label className="form-label">
+                            <Circle size={18} />
+                             Окружность головы (см)
                         </label>
                         <input
                             type="number"
                             name="headCircumference"
                             value={formData.headCircumference}
                             onChange={handleChange}
-                            style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                borderRadius: '12px',
-                                border: '2px solid #e2e8f0',
-                                fontSize: '16px'
-                            }}
+                            className="form-input"
                             step="0.1"
                             placeholder="45"
                         />
                     </div>
 
-                    <div style={{ marginBottom: '30px' }}>
-                        <label style={{ display: 'block', marginBottom: '8px', color: '#475569' }}>
+                    {/* Заметки */}
+                    <div className="form-group">
+                        <label className="form-label">
+                            <FileText size={18} />
                             Заметки
                         </label>
                         <textarea
                             name="notes"
                             value={formData.notes}
                             onChange={handleChange}
-                            style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                borderRadius: '12px',
-                                border: '2px solid #e2e8f0',
-                                fontSize: '16px',
-                                minHeight: '80px',
-                                resize: 'vertical'
-                            }}
+                            className="form-textarea"
                             placeholder="Дополнительная информация..."
                         />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '15px' }}>
+                    {/* Кнопки */}
+                    <div className="form-actions">
                         <button 
                             type="submit" 
                             disabled={loading}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '12px 30px',
-                                background: loading ? '#94a3b8' : '#3498db',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '12px',
-                                fontSize: '16px',
-                                fontWeight: '600',
-                                cursor: loading ? 'not-allowed' : 'pointer'
-                            }}
+                            className="submit-btn"
                         >
                             {loading ? <Loader size={18} /> : <Save size={18} />}
                             {loading ? 'Сохранение...' : 'Сохранить'}
@@ -243,14 +176,7 @@ function AddMeasurement() {
                         
                         <Link 
                             to={`/child/${child_id}`}
-                            style={{
-                                padding: '12px 30px',
-                                background: '#f1f5f9',
-                                color: '#64748b',
-                                textDecoration: 'none',
-                                borderRadius: '12px',
-                                border: '1px solid #e2e8f0'
-                            }}
+                            className="cancel-btn"
                         >
                             Отмена
                         </Link>
