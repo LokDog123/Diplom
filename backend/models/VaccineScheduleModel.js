@@ -5,7 +5,8 @@ const path = require('path');
 const VaccineScheduleModel = {
     async getAll() {
         const db = getDB();
-        return await db.collection('vaccine_schedules')
+        // Исправлено: vaccine_schedule (как в других методах)
+        return await db.collection('vaccine_schedule')
             .find({ is_active: true })
             .sort({ age_value_in_months: 1, dose: 1 })
             .toArray();
@@ -13,13 +14,13 @@ const VaccineScheduleModel = {
 
     async getByCodeAndDose(code, dose) {
         const db = getDB();
-        return await db.collection('vaccine_schedules')
+        return await db.collection('vaccine_schedule')
             .findOne({ code, dose, is_active: true });
     },
 
     async getByCode(code) {
         const db = getDB();
-        return await db.collection('vaccine_schedules')
+        return await db.collection('vaccine_schedule')
             .find({ code, is_active: true })
             .sort({ dose: 1 })
             .toArray();
@@ -27,7 +28,7 @@ const VaccineScheduleModel = {
 
     async getByAge(ageInMonths) {
         const db = getDB();
-        return await db.collection('vaccine_schedules')
+        return await db.collection('vaccine_schedule')
             .find({ 
                 age_value_in_months: { $lte: ageInMonths },
                 is_active: true 
@@ -38,7 +39,7 @@ const VaccineScheduleModel = {
 
     async getUpcomingVaccines(ageInMonths, lookaheadMonths = 6) {
         const db = getDB();
-        return await db.collection('vaccine_schedules')
+        return await db.collection('vaccine_schedule')
             .find({ 
                 age_value_in_months: { $gt: ageInMonths, $lte: ageInMonths + lookaheadMonths },
                 is_active: true 
@@ -49,7 +50,7 @@ const VaccineScheduleModel = {
 
     async getOverdueVaccines(ageInMonths) {
         const db = getDB();
-        return await db.collection('vaccine_schedules')
+        return await db.collection('vaccine_schedule')
             .find({ 
                 age_value_in_months: { $lte: ageInMonths },
                 is_active: true 
@@ -60,21 +61,20 @@ const VaccineScheduleModel = {
 
     async isEmpty() {
         const db = getDB();
-        const count = await db.collection('vaccine_schedules').countDocuments();
+        const count = await db.collection('vaccine_schedule').countDocuments();
         return count === 0;
     },
 
     async getCount() {
         const db = getDB();
-        return await db.collection('vaccine_schedules').countDocuments({ is_active: true });
+        return await db.collection('vaccine_schedule').countDocuments({ is_active: true });
     },
 
-    // Инициализация календаря - загружает данные из JSON файла ТОЛЬКО если БД пуста
+    // Остальные методы без изменений...
     async seed() {
         const db = getDB();
         
-        // Проверяем, есть ли уже данные
-        const existingCount = await db.collection('vaccine_schedules').countDocuments();
+        const existingCount = await db.collection('vaccine_schedule').countDocuments();
         
         if (existingCount > 0) {
             console.log(`📊 Данные уже существуют в БД. Найдено записей: ${existingCount}`);
@@ -86,24 +86,21 @@ const VaccineScheduleModel = {
             };
         }
         
-        // Загружаем данные из JSON файла только при первом запуске
         const vaccineScheduleData = await this.loadVaccineDataFromFile();
         
         if (!vaccineScheduleData || vaccineScheduleData.length === 0) {
             throw new Error('Не удалось загрузить данные о прививках. Проверьте файл vaccine_schedule.json');
         }
         
-        // Вставка данных
-        const result = await db.collection('vaccine_schedules').insertMany(vaccineScheduleData);
+        const result = await db.collection('vaccine_schedule').insertMany(vaccineScheduleData);
         
-        // Создание индексов
-        await db.collection('vaccine_schedules').createIndex(
+        await db.collection('vaccine_schedule').createIndex(
             { code: 1, dose: 1 }, 
             { unique: true }
         );
-        await db.collection('vaccine_schedules').createIndex({ age_value_in_months: 1 });
-        await db.collection('vaccine_schedules').createIndex({ code: 1 });
-        await db.collection('vaccine_schedules').createIndex({ is_active: 1 });
+        await db.collection('vaccine_schedule').createIndex({ age_value_in_months: 1 });
+        await db.collection('vaccine_schedule').createIndex({ code: 1 });
+        await db.collection('vaccine_schedule').createIndex({ is_active: 1 });
         
         console.log(`✅ Календарь прививок загружен в БД. Добавлено записей: ${result.insertedCount}`);
         
@@ -115,10 +112,8 @@ const VaccineScheduleModel = {
         };
     },
 
-    // Загрузка данных из JSON файла
     async loadVaccineDataFromFile() {
         try {
-            // Пробуем разные пути для JSON файла
             const possiblePaths = [
                 path.join(process.cwd(), 'data', 'vaccine_schedule.json'),
                 path.join(process.cwd(), 'vaccine_schedule.json'),
@@ -151,11 +146,8 @@ const VaccineScheduleModel = {
             throw new Error('Не удалось загрузить данные из JSON файла');
         }
         
-        // Очищаем коллекцию
-        await db.collection('vaccine_schedules').deleteMany({});
-        
-        // Вставляем новые данные
-        const result = await db.collection('vaccine_schedules').insertMany(vaccineScheduleData);
+        await db.collection('vaccine_schedule').deleteMany({});
+        const result = await db.collection('vaccine_schedule').insertMany(vaccineScheduleData);
         
         console.log(`🔄 Данные обновлены из JSON файла. Добавлено записей: ${result.insertedCount}`);
         
@@ -170,7 +162,7 @@ const VaccineScheduleModel = {
         const db = getDB();
         const { ObjectId } = require('mongodb');
         
-        const result = await db.collection('vaccine_schedules')
+        const result = await db.collection('vaccine_schedule')
             .updateOne(
                 { _id: new ObjectId(vaccineId) },
                 { $set: { ...updateData, updated_at: new Date() } }
@@ -182,7 +174,7 @@ const VaccineScheduleModel = {
     async addVaccine(vaccineData) {
         const db = getDB();
         
-        const result = await db.collection('vaccine_schedules').insertOne({
+        const result = await db.collection('vaccine_schedule').insertOne({
             ...vaccineData,
             is_active: true,
             created_at: new Date(),
@@ -196,7 +188,7 @@ const VaccineScheduleModel = {
         const db = getDB();
         const { ObjectId } = require('mongodb');
         
-        const result = await db.collection('vaccine_schedules')
+        const result = await db.collection('vaccine_schedule')
             .deleteOne({ _id: new ObjectId(vaccineId) });
         
         return result;

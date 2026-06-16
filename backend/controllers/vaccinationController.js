@@ -1,11 +1,11 @@
 const Vaccination = require('../models/Vaccination');
-const VaccinationService = require('../services/vaccinationService');
+const vaccinationService = require('../services/vaccinationService');
 
 const vaccinationController = {
     async getSchedule(req, res) {
         try {
             const { child_id } = req.params;
-            const result = await VaccinationService.getFullSchedule(child_id);
+            const result = await vaccinationService.getFullSchedule(child_id);
             res.json({ success: true, ...result });
         } catch (error) {
             console.error('❌ Ошибка получения календаря:', error);
@@ -50,7 +50,7 @@ const vaccinationController = {
     async getStats(req, res) {
         try {
             const { child_id } = req.params;
-            const stats = await VaccinationService.getVaccinationStats(child_id);
+            const stats = await vaccinationService.getVaccinationStats(child_id);
             res.json({ success: true, stats });
         } catch (error) {
             console.error('❌ Ошибка получения статистики:', error);
@@ -83,7 +83,6 @@ const vaccinationController = {
                 is_completed: !!administered_date
             });
             
-            // ВАЖНО: Раскомментировать или добавить ответ клиенту
             res.status(201).json({ 
                 success: true, 
                 message: "Прививка добавлена", 

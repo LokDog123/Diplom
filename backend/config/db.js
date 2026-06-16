@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 
-const url = 'mongodb://localhost:27017';
+// Используем переменную окружения для подключения
+const url = process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017';
 const dbName = 'Diploma';
 let db = null;
 let client = null;
@@ -8,19 +9,31 @@ let client = null;
 async function connectDB() {
     try {
         console.log('🔍 Подключение к MongoDB...');
-        client = new MongoClient(url);
+        console.log(`📌 Используемый URI: ${url.replace(/\/\/.*@/, '//****:****@')}`); // Скрываем пароль в логах
+        
+        client = new MongoClient(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            // Таймауты для Railway
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+        });
+        
         await client.connect();
-        console.log('✅ MongoDB подключена');
+        console.log('✅ MongoDB подключена успешно!');
         
         db = client.db(dbName);
         
+        // Проверяем доступные коллекции
         const collections = await db.listCollections().toArray();
         console.log('📚 Существующие коллекции:', collections.map(c => c.name).join(', ') || 'нет');
         
         return db;
     } catch (error) {
-        console.error('❌ Ошибка MongoDB:', error.message);
-        process.exit(1);
+        console.error('❌ Ошибка подключения к MongoDB:', error.message);
+        console.error('💡 Убедитесь, что переменная MONGODB_URI или MONGO_URL задана');
+        // Не завершаем процесс, чтобы Railway мог перезапустить
+        throw error;
     }
 }
 
